@@ -980,6 +980,130 @@
         .fab-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
         .fab-top:hover { background: var(--accent); }
         .fab-top svg { width: 12px; height: 12px; }
+
+        /* ═══ ФАЗА 1: РОЛИ, ТЕМПЕРАТУРА, ПРОПОРЦИИ ═══ */
+        .color-role-tag {
+            font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+            font-weight: 500; padding: 3px 8px; display: inline-block; margin-bottom: 2px;
+        }
+        .role-dominant { background: var(--accent); color: white; }
+        .role-support  { background: rgba(var(--accent-rgb),.15); color: var(--text-soft); }
+        .role-accent-c { border: 1px solid var(--line-soft); color: var(--muted); }
+        .color-temp-tag {
+            font-size: 9px; letter-spacing: 1px; color: var(--muted);
+            display: flex; align-items: center; gap: 5px;
+            padding: 5px 14px 8px;
+        }
+        .color-temp-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .temp-warm    .color-temp-dot { background: #E07B54; }
+        .temp-cool    .color-temp-dot { background: #45B7D1; }
+        .temp-neutral .color-temp-dot { background: #A89890; }
+        .proportion-strip { display: flex; height: 6px; margin-bottom: 8px; overflow: hidden; }
+        .proportion-seg   { height: 100%; transition: flex 0.4s ease; }
+        .proportion-labels {
+            display: flex; justify-content: space-between;
+            font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--muted); margin-bottom: 24px; padding: 0 2px;
+        }
+        .neutral-base-section {
+            margin-bottom: 32px; padding: 16px 20px;
+            background: rgba(255,255,255,.55); border: 1px solid var(--line);
+            display: flex; align-items: center; gap: 16px;
+        }
+        .neutral-base-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); flex-shrink: 0; }
+        .neutral-base-swatch { width: 48px; height: 48px; flex-shrink: 0; cursor: pointer; position: relative; transition: transform .2s; }
+        .neutral-base-swatch:hover { transform: scale(1.08); }
+        .neutral-base-name  { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic; }
+        .neutral-base-hex   { font-size: 10px; letter-spacing: 1.5px; color: var(--muted); }
+        .neutral-base-desc  { font-size: 10px; color: var(--text-muted); font-style: italic; margin-top: 2px; }
+        .pantone-ref {
+            font-family: 'Cormorant Garamond', serif; font-size: 11px; font-style: italic;
+            color: var(--muted); padding: 2px 14px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .color-lbar-wrap { padding: 0 14px 10px; }
+        .color-lbar { height: 2px; background: var(--line); position: relative; overflow: hidden; }
+        .color-lbar-fill { position: absolute; left:0; top:0; bottom:0; background: var(--accent); transition: width .4s ease, background .7s; }
+        .color-lbar-label { font-size: 8px; letter-spacing: 1px; color: var(--muted); margin-top: 3px; }
+
+        /* ═══ ФАЗА 2: СИСТЕМА ГАРМОНИЙ ═══ */
+        .harmony-section { margin-bottom: 80px; }
+        .harmony-heading { font-family: 'Playfair Display', serif; font-size: clamp(28px,4vw,42px); font-weight: 400; margin-bottom: 40px; }
+        .harmony-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; background: var(--line); }
+        .harmony-btn {
+            background: var(--bg); border: none; padding: 22px 16px 18px;
+            cursor: pointer; text-align: left; font-family: 'Montserrat', sans-serif;
+            position: relative; overflow: hidden; transition: background .25s;
+        }
+        .harmony-btn::before {
+            content: ''; position: absolute; bottom:0; left:0; right:0; height: 3px;
+            background: var(--accent); transform: scaleX(0); transform-origin: left;
+            transition: transform .3s ease, background .7s;
+        }
+        .harmony-btn:hover { background: rgba(var(--accent-rgb),.04); }
+        .harmony-btn:hover::before { transform: scaleX(.5); }
+        .harmony-btn.active { background: white; }
+        .harmony-btn.active::before { transform: scaleX(1); }
+        .harmony-icon { font-size: 20px; display: block; margin-bottom: 10px; line-height: 1; }
+        .harmony-name { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500; color: var(--text); display: block; margin-bottom: 5px; }
+        .harmony-desc { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: italic; color: var(--muted); line-height: 1.4; display: block; }
+        .harmony-badge {
+            display: inline-block; padding: 4px 12px;
+            border: 1px solid var(--line-soft); font-size: 9px; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--accent); margin-top: 6px; transition: border-color .7s, color .7s;
+        }
+
+        /* ═══ ФАЗА 3: СЕЗОННЫЕ ГЛАВЫ ═══ */
+        .chapter-strip { display: flex; gap: 2px; margin-top: 16px; background: var(--line); }
+        .chapter-btn {
+            flex: 1; padding: 10px 8px; background: var(--bg); border: none;
+            font-family: 'Montserrat', sans-serif; font-size: 8px; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--muted); cursor: pointer; transition: background .2s, color .2s;
+        }
+        .chapter-btn:hover { background: rgba(var(--accent-rgb),.06); color: var(--accent); }
+        .chapter-btn.active { background: white; color: var(--text-soft); font-weight: 500; }
+
+        /* ═══ ФАЗА 4: КОПИРОВАТЬ ВСЁ ═══ */
+        .copy-all-wrap { margin-top: 12px; display: flex; justify-content: flex-end; }
+        .copy-all-btn {
+            padding: 10px 20px; background: transparent; border: 1px solid var(--line-soft);
+            font-family: 'Montserrat', sans-serif; font-size: 9px; letter-spacing: 3px;
+            text-transform: uppercase; cursor: pointer; color: var(--text-soft); transition: all .2s;
+        }
+        .copy-all-btn:hover { background: var(--text); color: white; border-color: var(--text); }
+
+        /* ═══ ФАЗА 5: РУКОВОДСТВО ПО ПРИМЕНЕНИЮ ═══ */
+        .usage-guide { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 28px; }
+        .usage-guide-title {
+            font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; transition: color .7s;
+        }
+        .usage-guide-title::after { content: ''; flex: 1; height: 1px; background: var(--line-soft); }
+        .usage-role-row { display: flex; align-items: flex-start; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+        .usage-role-row:last-of-type { border-bottom: none; }
+        .usage-swatch-mini { width: 36px; height: 36px; flex-shrink: 0; cursor: pointer; position: relative; transition: transform .2s; }
+        .usage-swatch-mini:hover { transform: scale(1.12); }
+        .usage-role-name { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+        .usage-role-pct  { font-family: 'Playfair Display', serif; font-size: 18px; font-style: italic; color: var(--accent); margin-bottom: 4px; transition: color .7s; }
+        .usage-role-desc { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-style: italic; color: var(--muted); line-height: 1.5; }
+        .compatible-neutrals { margin-top: 24px; padding: 20px; background: rgba(255,255,255,.5); border: 1px solid var(--line); }
+        .compatible-title { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+        .compatible-swatches { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+        .compatible-chip { display: flex; align-items: center; gap: 8px; cursor: pointer; position: relative; transition: opacity .2s; }
+        .compatible-chip:hover { opacity: .7; }
+        .compatible-chip-swatch { width: 28px; height: 28px; border-radius: 50%; }
+        .compatible-chip-label { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--text); }
+        .temp-warning {
+            display: none; margin-top: 16px; padding: 14px 20px;
+            border-left: 3px solid #E9C46A; background: rgba(233,196,106,.08);
+            font-family: 'Cormorant Garamond', serif; font-size: 15px; font-style: italic;
+            color: var(--text); line-height: 1.6;
+        }
+        .temp-warning.show { display: block; }
+
+        @media (max-width: 768px) {
+            .harmony-grid { grid-template-columns: repeat(2,1fr); }
+            .usage-role-row { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
@@ -1067,11 +1191,46 @@
                 <span class="season-name-fr">Hiver</span>
             </button>
         </div>
+
+        <!-- Сезонные главы (Фаза 3) -->
+        <div class="chapter-strip" id="chapterStrip">
+            <button class="chapter-btn" data-chapter="early" onclick="selectChapter(this)">Ранний период</button>
+            <button class="chapter-btn active" data-chapter="mid" onclick="selectChapter(this)">Середина сезона</button>
+            <button class="chapter-btn" data-chapter="late" onclick="selectChapter(this)">Поздний период</button>
+        </div>
     </section>
 
-    <!-- Шаг 2: Настроение -->
-    <section class="mood-section">
+    <!-- Шаг 2: Гармония (Фаза 2) -->
+    <section class="harmony-section">
         <div class="step-label">02</div>
+        <h2 class="harmony-heading">Тип гармонии</h2>
+        <div class="harmony-grid">
+            <button class="harmony-btn active" data-harmony="free" onclick="selectHarmony(this)">
+                <span class="harmony-icon">◈</span>
+                <span class="harmony-name">Свободная</span>
+                <span class="harmony-desc">Интуитивный выбор по настроению без строгих правил</span>
+            </button>
+            <button class="harmony-btn" data-harmony="analogous" onclick="selectHarmony(this)">
+                <span class="harmony-icon">◑</span>
+                <span class="harmony-name">Аналоговая</span>
+                <span class="harmony-desc">Соседние оттенки — мягко, элегантно, без контраста</span>
+            </button>
+            <button class="harmony-btn" data-harmony="complementary" onclick="selectHarmony(this)">
+                <span class="harmony-icon">◐</span>
+                <span class="harmony-name">Комплементарная</span>
+                <span class="harmony-desc">Противоположные тона — контрастно и выразительно</span>
+            </button>
+            <button class="harmony-btn" data-harmony="monochromatic" onclick="selectHarmony(this)">
+                <span class="harmony-icon">▥</span>
+                <span class="harmony-name">Монохромная</span>
+                <span class="harmony-desc">Один тон, разная светлота — утончённо и строго</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Шаг 3: Настроение -->
+    <section class="mood-section">
+        <div class="step-label">03</div>
         <h2 class="mood-heading">Опишите настроение</h2>
 
         <div class="mood-input-wrap">
@@ -1164,7 +1323,10 @@
         <div class="mood-detected" id="moodDetected"></div>
 
         <div class="palette-header">
-            <div class="palette-title" id="paletteName"></div>
+            <div>
+                <div class="palette-title" id="paletteName"></div>
+                <div class="harmony-badge" id="harmonyBadge"></div>
+            </div>
             <div class="palette-meta-block">
                 <div class="palette-meta-season" id="paletteSeason"></div>
                 <div class="palette-meta-mood" id="paletteMood"></div>
@@ -1173,11 +1335,23 @@
 
         <div class="color-grid" id="colorGrid"></div>
 
+        <!-- Пропорции и нейтраль (Фазы 1.1, 1.3) -->
+        <div id="proportionStrip"></div>
+        <div id="neutralBase"></div>
+
         <div class="palette-actions">
             <button class="action-btn-primary" id="saveBtn" onclick="savePalette()">♥ &nbsp;Сохранить палитру</button>
             <button class="action-btn-secondary" onclick="generatePalette()">↻ &nbsp;Обновить</button>
             <button class="action-btn-tertiary" onclick="downloadPalette()">↓ Скачать PNG</button>
         </div>
+
+        <!-- Скопировать все (Фаза 4.4) -->
+        <div class="copy-all-wrap">
+            <button class="copy-all-btn" onclick="copyAllColors()">◱ &nbsp;Скопировать все цвета и роли</button>
+        </div>
+
+        <!-- Руководство по применению (Фаза 5) -->
+        <div id="usageGuide"></div>
 
     </div>
 
@@ -1309,14 +1483,14 @@ const PALETTES = {
             { hex: '#FFECD2', name: 'Abricot Solaire' },
         ],
         ocean: [
-            { hex: '#4ECDC4', name: 'Turquoise Côtier' },
-            { hex: '#45B7D1', name: 'Océan Azur' },
-            { hex: '#96CEB4', name: 'Mer Émeraude' },
-            { hex: '#88D8C0', name: 'Vague Tropicale' },
-            { hex: '#F7DB81', name: 'Soleil Dorado' },
-            { hex: '#FFEAA7', name: 'Sable Chaud' },
-            { hex: '#74B9FF', name: 'Lagon Clair' },
-            { hex: '#55EFC4', name: 'Menthe Marine' },
+            { hex: '#7EC8C8', name: 'Lagon Fumé' },
+            { hex: '#9CC5D4', name: 'Ciel Marin' },
+            { hex: '#B5D5C5', name: 'Écume Pâle' },
+            { hex: '#C4B5A5', name: 'Sable Doux' },
+            { hex: '#E8DDD0', name: 'Coquillage' },
+            { hex: '#A8C4B8', name: 'Jade Côtier' },
+            { hex: '#D4C8A0', name: 'Paille Marine' },
+            { hex: '#8BB4B8', name: 'Mer Calme' },
         ],
         garden: [
             { hex: '#FFD93D', name: 'Tournesol Miu Miu' },
@@ -1924,50 +2098,55 @@ function hideValidationHint() {
 
 function generatePalette() {
     const moodText = document.getElementById('moodInput').value.trim();
+    if (!moodText) showValidationHint('Попробуйте выбрать настроение или написать своё слово...');
 
-    // Шаг 3: мягкая валидация
-    if (!moodText) {
-        showValidationHint('Попробуйте выбрать настроение или написать своё слово...');
-    }
-
-    // 1️⃣ Сначала проверяем: просит ли пользователь конкретный цвет?
     const colorRequest = detectColorRequest(moodText);
-
-    let selected, feedbackText, paletteName;
+    let pool, feedbackText, paletteName;
 
     if (colorRequest && COLOR_PALETTES[colorRequest]) {
-        // Берём палитру нужного цвета, учитываем сезон
-        const pool = COLOR_PALETTES[colorRequest][currentSeason];
-        selected    = shuffle(pool).slice(0, 6);
+        pool         = COLOR_PALETTES[colorRequest][currentSeason];
         feedbackText = `${COLOR_LABELS[colorRequest]} · ${SEASON_LABELS[currentSeason]}`;
         paletteName  = COLOR_LABELS[colorRequest];
     } else {
-        // 2️⃣ Иначе — старая логика настроения
         const mood   = detectMood(moodText);
         const key    = SEASON_MOOD_MAP[currentSeason][mood.key];
-        selected     = shuffle(PALETTES[currentSeason][key]).slice(0, 6);
+        pool         = PALETTES[currentSeason][key];
         feedbackText = moodText ? `${mood.label} · «${moodText}»` : 'Классическая сезонная палитра';
         paletteName  = PALETTE_NAMES[currentSeason][Math.floor(Math.random() * 5)];
     }
 
-    currentColors = selected;
+    // Фаза 3: глава → Фаза 2: гармония
+    const chaptered  = applyChapter(shuffle(pool), currentChapter);
+    const harmonized = applyHarmony(chaptered, currentHarmony);
+    const selected   = harmonized.slice(0, 6);
+    currentColors    = selected;
+
+    // Обновляем заголовок
+    const harmonyLabels = { free:'Свободная', analogous:'Аналоговая', complementary:'Комплементарная', monochromatic:'Монохромная' };
+    const chapterLabels = { early:'Ранний', mid:'Середина', late:'Поздний' };
+    const tempProfile   = getPaletteTemperatureProfile(selected);
 
     document.getElementById('moodDetected').textContent  = feedbackText;
     document.getElementById('paletteName').textContent   = paletteName;
     document.getElementById('paletteSeason').textContent = SEASON_LABELS[currentSeason];
     document.getElementById('paletteMood').textContent   = moodText || 'Signature';
 
-    renderColorGrid(selected);
+    const badge = document.getElementById('harmonyBadge');
+    if (badge) badge.textContent =
+        `${harmonyLabels[currentHarmony]} · ${chapterLabels[currentChapter]} · ${tempProfile}`;
 
-    // Шаг 8: скрыть заглушку
+    // Рендерим все блоки
+    renderColorGrid(selected);
+    renderProportionStrip(selected);
+    renderNeutralBase(currentSeason);
+    renderUsageGuide(selected);
+
     document.getElementById('palettePlaceholder').style.display = 'none';
 
     const result = document.getElementById('paletteResult');
     result.classList.add('visible');
-
-    // Шаг 1: подсветка + прокрутка
     result.classList.remove('just-generated');
-    void result.offsetWidth; // reflow для перезапуска анимации
+    void result.offsetWidth;
     result.classList.add('just-generated');
     setTimeout(() => result.scrollIntoView({ behavior:'smooth', block:'start' }), 150);
     hideValidationHint();
@@ -1977,8 +2156,14 @@ function renderColorGrid(colors) {
     const grid = document.getElementById('colorGrid');
     grid.innerHTML = '';
     colors.forEach((color, i) => {
-        const uid      = color.hex.replace('#','');
+        const uid       = color.hex.replace('#','');
         const textColor = getContrastColor(color.hex);
+        const role      = getRoleInfo(i);
+        const temp      = getTemperature(color.hex);
+        const tempInfo  = TEMP_LABELS[temp];
+        const pantone   = findNearestPantone(color.hex);
+        const lPct      = Math.round(hexToHSL(color.hex).l);
+
         const card = document.createElement('div');
         card.className = 'color-card';
         card.style.animationDelay = `${i * 80}ms`;
@@ -1986,11 +2171,22 @@ function renderColorGrid(colors) {
             <div class="color-swatch" style="background:${color.hex}">
                 <div class="swatch-label" style="color:${textColor}">${color.name}</div>
             </div>
-            <div class="color-hex-row">
-                <span class="color-hex-val">${color.hex}</span>
-                <svg class="copy-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
-                    <rect x="5" y="5" width="9" height="9" rx="1"/><path d="M11 5V3a1 1 0 00-1-1H3a1 1 0 00-1 1v7a1 1 0 001 1h2"/>
-                </svg>
+            <div class="color-hex-row" style="flex-direction:column;align-items:flex-start;padding:10px 14px 4px">
+                <span class="color-role-tag ${role.cls}">${role.label} · ${role.pct}</span>
+                <div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:4px">
+                    <span class="color-hex-val">${color.hex}</span>
+                    <svg class="copy-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <rect x="5" y="5" width="9" height="9" rx="1"/><path d="M11 5V3a1 1 0 00-1-1H3a1 1 0 00-1 1v7a1 1 0 001 1h2"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="color-temp-tag ${tempInfo.cls}">
+                <div class="color-temp-dot"></div>${tempInfo.text}
+            </div>
+            <div class="pantone-ref">≈ Pantone ${pantone}</div>
+            <div class="color-lbar-wrap">
+                <div class="color-lbar"><div class="color-lbar-fill" style="width:${lPct}%"></div></div>
+                <div class="color-lbar-label">Светлота ${lPct}%</div>
             </div>
             <div class="copied-flash" id="flash-${uid}"><span>Скопировано</span></div>
         `;
@@ -2149,7 +2345,11 @@ function downloadPalette() {
         ctx.fillText(c.name, i*cw+18, SH-24);
         ctx.fillStyle = '#A89890';
         ctx.font = '13px Arial, sans-serif';
-        ctx.fillText(c.hex, i*cw+18, SH+44);
+        ctx.fillText(c.hex, i*cw+18, SH+36);
+        const role = getRoleInfo(i);
+        ctx.fillText(`${role.label} ${role.pct}`, i*cw+18, SH+52);
+        ctx.font = 'italic 11px Georgia, serif';
+        ctx.fillText('≈ Pantone ' + findNearestPantone(c.hex), i*cw+18, SH+68);
     });
 
     ctx.fillStyle = '#F5F2EE';
@@ -2171,7 +2371,316 @@ function downloadPalette() {
     });
 }
 
-// Шаг 7: переключение раскрытия карточки
+// ════════════════════════════════════════════════
+//  ФАЗЫ 1-5: ПРОФЕССИОНАЛЬНЫЕ ИНСТРУМЕНТЫ
+// ════════════════════════════════════════════════
+
+let currentHarmony = 'free';
+let currentChapter = 'mid';
+
+// ── Цветовые утилиты ──────────────────────────
+
+function hexToHSL(hex) {
+    let r = parseInt(hex.slice(1,3),16)/255;
+    let g = parseInt(hex.slice(3,5),16)/255;
+    let b = parseInt(hex.slice(5,7),16)/255;
+    const max = Math.max(r,g,b), min = Math.min(r,g,b);
+    let h = 0, s = 0, l = (max+min)/2;
+    if (max !== min) {
+        const d = max-min;
+        s = l > 0.5 ? d/(2-max-min) : d/(max+min);
+        switch(max) {
+            case r: h = ((g-b)/d + (g<b?6:0))/6; break;
+            case g: h = ((b-r)/d + 2)/6; break;
+            case b: h = ((r-g)/d + 4)/6; break;
+        }
+    }
+    return { h: h*360, s: s*100, l: l*100 };
+}
+
+function getTemperature(hex) {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    const w = r*0.55 + g*0.1 - b*0.65;
+    return w > 35 ? 'warm' : w < -15 ? 'cool' : 'neutral';
+}
+
+function colorDist(h1, h2) {
+    const r1=parseInt(h1.slice(1,3),16), g1=parseInt(h1.slice(3,5),16), b1=parseInt(h1.slice(5,7),16);
+    const r2=parseInt(h2.slice(1,3),16), g2=parseInt(h2.slice(3,5),16), b2=parseInt(h2.slice(5,7),16);
+    const rm=(r1+r2)/2, dr=r1-r2, dg=g1-g2, db=b1-b2;
+    return Math.sqrt((2+rm/256)*dr*dr + 4*dg*dg + (2+(255-rm)/256)*db*db);
+}
+
+// ── Роли 60/30/10 ─────────────────────────────
+
+const ROLE_DATA = [
+    { label:'Доминанта', pct:'60%', cls:'role-dominant',
+      desc:'Основная ткань, крупные детали фасона, фоновый цвет коллекции' },
+    { label:'Поддержка',  pct:'20%', cls:'role-support',
+      desc:'Подкладка, воротник, кантик, цветовые блоки на изделии' },
+    { label:'Поддержка',  pct:'10%', cls:'role-support',
+      desc:'Пояс, манжеты, карманы, контрастная окантовка' },
+    { label:'Акцент',    pct:'5%',  cls:'role-accent-c',
+      desc:'Пуговицы, строчка, декоративная деталь' },
+    { label:'Акцент',    pct:'3%',  cls:'role-accent-c',
+      desc:'Принт, брошь, бижутерия, финишный акцент' },
+    { label:'Акцент',    pct:'2%',  cls:'role-accent-c',
+      desc:'Точечный элемент — монограмма, фурнитура' },
+];
+
+function getRoleInfo(i) { return ROLE_DATA[Math.min(i, ROLE_DATA.length-1)]; }
+
+// ── Температура палитры ────────────────────────
+
+const TEMP_LABELS = {
+    warm:    { text:'Тёплый',     cls:'temp-warm'    },
+    cool:    { text:'Холодный',   cls:'temp-cool'    },
+    neutral: { text:'Нейтральный',cls:'temp-neutral' },
+};
+
+function getPaletteTemperatureProfile(colors) {
+    const t = colors.map(c=>getTemperature(c.hex));
+    const w=t.filter(x=>x==='warm').length, cl=t.filter(x=>x==='cool').length;
+    if (w > cl+1)  return 'Тёплая';
+    if (cl > w+1)  return 'Холодная';
+    if (w>0&&cl>0) return 'Контрастная';
+    return 'Нейтральная';
+}
+
+function detectTemperatureConflict(colors) {
+    const dt = colors.slice(0,3).map(c=>getTemperature(c.hex));
+    return dt.includes('warm') && dt.includes('cool');
+}
+
+// ── Нейтральная база ───────────────────────────
+
+const NEUTRAL_BASES = {
+    spring: { hex:'#F5EDD5', name:'Crème Ivoire',    desc:'Тёплый кремовый — мягкая база весенних тонов' },
+    summer: { hex:'#EDD5A3', name:'Sable Doux',      desc:'Тёплый песок — связующий нейтраль летней яркости' },
+    autumn: { hex:'#D4C5B0', name:'Lin Naturel',     desc:'Натуральный лён — земляная база осенних красок' },
+    winter: { hex:'#E8E0D8', name:'Ivoire Hivernal', desc:'Холодная слоновая кость — элегантная зимняя база' },
+};
+
+function renderNeutralBase(season) {
+    const el = document.getElementById('neutralBase');
+    const nb = NEUTRAL_BASES[season];
+    const uid = 'nb-' + nb.hex.replace('#','');
+    el.innerHTML = `
+        <div class="neutral-base-section">
+            <span class="neutral-base-label">Base</span>
+            <div class="neutral-base-swatch" style="background:${nb.hex}" onclick="copyColor('${nb.hex}','${uid}')" title="Скопировать">
+                <div class="copied-flash" id="flash-${uid}"><span>✓</span></div>
+            </div>
+            <div>
+                <div class="neutral-base-name">${nb.name}</div>
+                <div class="neutral-base-hex">${nb.hex}</div>
+                <div class="neutral-base-desc">${nb.desc}</div>
+            </div>
+        </div>`;
+}
+
+// ── Полоска пропорций ─────────────────────────
+
+function renderProportionStrip(colors) {
+    const el = document.getElementById('proportionStrip');
+    const pcts = [60, 20, 10, 5, 3, 2];
+    const segs = colors.map((c,i) =>
+        `<div class="proportion-seg" style="background:${c.hex};flex:${pcts[i]||2}"></div>`
+    ).join('');
+    el.innerHTML = `
+        <div class="proportion-strip">${segs}</div>
+        <div class="proportion-labels">
+            <span>60% Доминанта</span><span>30% Поддержка</span><span>10% Акцент</span>
+        </div>`;
+}
+
+// ── Гармонии ───────────────────────────────────
+
+function hueDiff(h1, h2) {
+    const d = Math.abs(h1-h2) % 360;
+    return d > 180 ? 360-d : d;
+}
+
+function applyHarmony(pool, harmony) {
+    if (harmony === 'free' || pool.length <= 3) return pool;
+    const seed = hexToHSL(pool[0].hex);
+    const scored = pool.map(c => {
+        const {h} = hexToHSL(c.hex);
+        const diff = hueDiff(seed.h, h);
+        let score = 0;
+        if (harmony === 'analogous')      score = diff <= 50 ? 100-diff*1.5 : 0;
+        else if (harmony === 'complementary') score = diff<=30 ? 100 : diff>=150 ? 70-(180-diff) : 0;
+        else if (harmony === 'monochromatic') score = diff <= 22 ? 100-diff*2 : 0;
+        return { c, score };
+    });
+    const harmonious = scored.filter(x=>x.score>0).sort((a,b)=>b.score-a.score).map(x=>x.c);
+    const rest = pool.filter(c=>!harmonious.includes(c));
+    return [...harmonious, ...rest];
+}
+
+function selectHarmony(btn) {
+    document.querySelectorAll('.harmony-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentHarmony = btn.dataset.harmony;
+}
+
+// ── Сезонные главы ─────────────────────────────
+
+function selectChapter(btn) {
+    document.querySelectorAll('.chapter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentChapter = btn.dataset.chapter;
+}
+
+function applyChapter(colors, chapter) {
+    if (chapter === 'mid') return colors;
+    return [...colors].sort((a,b) => {
+        const la=hexToHSL(a.hex).l, lb=hexToHSL(b.hex).l;
+        const sa=hexToHSL(a.hex).s, sb=hexToHSL(b.hex).s;
+        return chapter==='early' ? lb-la : (la-lb)+(sb-sa)*0.4;
+    });
+}
+
+// ── Pantone-приближение ────────────────────────
+
+const PANTONE_TABLE = [
+    {hex:'#F7CAC9',name:'13-2010 Crystal Rose'},{hex:'#F5A0B0',name:'14-1911 Peach Blush'},
+    {hex:'#FF6B9D',name:'17-2034 Flamingo Pink'},{hex:'#B03060',name:'19-2041 Raspberry Sorbet'},
+    {hex:'#8B2040',name:'19-1955 Cerise'},{hex:'#FF4444',name:'17-1662 Flame'},
+    {hex:'#C0392B',name:'19-1664 Aurora Red'},{hex:'#8B0000',name:'19-1762 Chili Pepper'},
+    {hex:'#FF8E72',name:'15-1542 Peach Cobbler'},{hex:'#F4A261',name:'15-1157 Amber'},
+    {hex:'#E9C46A',name:'14-0941 Honey Peach'},{hex:'#B7860B',name:'16-0945 Honey Gold'},
+    {hex:'#FFD93D',name:'12-0752 Buttercup'},{hex:'#FFEAA7',name:'12-0712 Vanilla'},
+    {hex:'#F7DB81',name:'13-0858 Pale Banana'},{hex:'#4ECDC4',name:'15-5519 Turquoise'},
+    {hex:'#45B7D1',name:'15-4720 Crystal Blue'},{hex:'#74B9FF',name:'14-4318 Cerulean'},
+    {hex:'#55EFC4',name:'13-5414 Mint Leaf'},{hex:'#96CEB4',name:'14-0232 Grayed Jade'},
+    {hex:'#88D8C0',name:'14-5420 Aquamarine'},{hex:'#2DAA6A',name:'17-0145 Island Green'},
+    {hex:'#5A9A6A',name:'16-0237 Jade Lime'},{hex:'#43AA8B',name:'16-5533 Arcadia'},
+    {hex:'#2C5F2E',name:'19-0430 Trekking Green'},{hex:'#8A9A5B',name:'17-0535 Fern'},
+    {hex:'#A8D5A2',name:'13-0117 Grayed Jade'},{hex:'#2F5496',name:'19-3952 Strong Blue'},
+    {hex:'#1A2A6A',name:'19-4150 Dark Sapphire'},{hex:'#3858A0',name:'19-3830 Blue Iris'},
+    {hex:'#87CEEB',name:'14-4122 Sky Blue'},{hex:'#1B2A4A',name:'19-4024 Dark Sapphire'},
+    {hex:'#9B59B6',name:'18-3633 Amethyst Orchid'},{hex:'#6D2B8F',name:'19-3536 Ultra Violet'},
+    {hex:'#DDA8C0',name:'14-3110 Pale Blush'},{hex:'#C090C8',name:'16-3520 Orchid Haze'},
+    {hex:'#F2EAE2',name:'11-0602 Blanc de Blanc'},{hex:'#D8CEC4',name:'13-0002 White Asparagus'},
+    {hex:'#C4A882',name:'15-1117 Peyote'},{hex:'#8B7355',name:'17-1118 Warm Taupe'},
+    {hex:'#6B5344',name:'18-1048 Bison'},{hex:'#264653',name:'19-4241 Dark Slate'},
+    {hex:'#E76F51',name:'16-1546 Copper'},{hex:'#2A9D8F',name:'17-5126 Balsam'},
+    {hex:'#C05A18',name:'17-1145 Autumn Maple'},{hex:'#FF6B6B',name:'16-1548 Living Coral'},
+    {hex:'#D4A5A5',name:'14-1714 Rose Smoke'},{hex:'#F5DEB3',name:'12-0813 Wheat'},
+    {hex:'#EDD5A3',name:'12-0736 Banana Cream'},{hex:'#A0A0B8',name:'15-3910 Lavender Gray'},
+    {hex:'#C0C0C0',name:'14-4102 Silver'},{hex:'#1A1A1A',name:'19-0303 Jet Black'},
+    {hex:'#FFFFFF',name:'11-0601 Bright White'},{hex:'#E8E0D8',name:'11-0602 Whitecap Gray'},
+    {hex:'#F5EDD5',name:'12-0712 Vanilla Cream'},{hex:'#D4C5B0',name:'13-0905 Whitecap Gray'},
+    {hex:'#A8DADC',name:'13-4308 Crystal Blue'},{hex:'#7EC8C8',name:'14-4820 Aqua Haze'},
+    {hex:'#9CC5D4',name:'14-4516 Cerulean Tint'},{hex:'#B5D5C5',name:'14-0230 Sea Foam'},
+    {hex:'#C4B5A5',name:'13-1015 Seashell'},{hex:'#E8DDD0',name:'11-0907 White Swan'},
+    {hex:'#DAA520',name:'16-1054 Amber Yellow'},{hex:'#8BB4B8',name:'15-4717 Aquifer'},
+];
+
+function findNearestPantone(hex) {
+    let best = PANTONE_TABLE[0], bestDist = Infinity;
+    for (const p of PANTONE_TABLE) {
+        const d = colorDist(hex, p.hex);
+        if (d < bestDist) { bestDist = d; best = p; }
+    }
+    return best.name;
+}
+
+// ── Совместимые нейтрали ───────────────────────
+
+const COMPAT_NEUTRALS = {
+    warm:    [{hex:'#F5EDD5',name:'Ivoire Doux'},{hex:'#C4A882',name:'Peyote'},{hex:'#DEB887',name:'Bois Clair'}],
+    cool:    [{hex:'#F5F5F5',name:'Blanc Optique'},{hex:'#B8B8C8',name:'Brume Grise'},{hex:'#E8E0D8',name:'Ivoire Froid'}],
+    neutral: [{hex:'#F2EAE2',name:'Crème Naturel'},{hex:'#D8CEC4',name:'Lin Pâle'},{hex:'#C4A882',name:'Peyote'}],
+};
+
+function getCompatibleNeutrals(colors) {
+    const t = colors.map(c=>getTemperature(c.hex));
+    const w=t.filter(x=>x==='warm').length, cl=t.filter(x=>x==='cool').length;
+    return w>cl ? COMPAT_NEUTRALS.warm : cl>w ? COMPAT_NEUTRALS.cool : COMPAT_NEUTRALS.neutral;
+}
+
+// ── Руководство по применению ─────────────────
+
+const USAGE_DESCS = [
+    'Основная ткань, крупные детали — задаёт тон всей коллекции',
+    'Подкладка, воротник, кантик — поддерживает доминанту, не соперничает',
+    'Пояс, манжеты, вставка — ритмизирует силуэт',
+    'Пуговицы, строчка, декоративная деталь — точечный акцент',
+    'Принт, монограмма, финишный элемент — художественный штрих',
+    'Фурнитура, бижутерия — завершающий отсвет',
+];
+
+function renderUsageGuide(colors) {
+    const el = document.getElementById('usageGuide');
+    const neutrals = getCompatibleNeutrals(colors);
+    const conflict  = detectTemperatureConflict(colors);
+    const tempProf  = getPaletteTemperatureProfile(colors);
+
+    const rows = colors.map((c,i) => {
+        const role=getRoleInfo(i), uid='ug-'+c.hex.replace('#','')+i;
+        return `<div class="usage-role-row">
+            <div class="usage-swatch-mini" style="background:${c.hex}" onclick="copyColor('${c.hex}','${uid}')" title="Скопировать">
+                <div class="copied-flash" id="flash-${uid}"><span>✓</span></div>
+            </div>
+            <div>
+                <div class="usage-role-name">${role.label}</div>
+                <div class="usage-role-pct">${role.pct}</div>
+                <div class="usage-role-desc">${USAGE_DESCS[i]||USAGE_DESCS[5]}</div>
+            </div>
+        </div>`;
+    }).join('');
+
+    const chips = neutrals.map(n => {
+        const uid2='compat-'+n.hex.replace('#','');
+        return `<div class="compatible-chip" onclick="copyColor('${n.hex}','${uid2}')">
+            <div class="compatible-chip-swatch" style="background:${n.hex}"></div>
+            <span class="compatible-chip-label">${n.name}</span>
+            <div class="copied-flash" id="flash-${uid2}"><span>✓</span></div>
+        </div>`;
+    }).join('');
+
+    el.innerHTML = `<div class="usage-guide">
+        <div class="usage-guide-title">Руководство по применению · Палитра ${tempProf}</div>
+        <div>
+            ${rows}
+            <div class="compatible-neutrals">
+                <div class="compatible-title">Совместимые нейтрали</div>
+                <div class="compatible-swatches">${chips}</div>
+            </div>
+            <div class="temp-warning ${conflict?'show':''}">
+                ⚠ Палитра смешивает тёплые и холодные оттенки в позиции доминанты.
+                Проверьте — это намеренный контраст или нужно выбрать единую температуру.
+            </div>
+        </div>
+    </div>`;
+}
+
+// ── Копировать все ─────────────────────────────
+
+function copyAllColors() {
+    if (!currentColors.length) return;
+    const lines = currentColors.map((c,i) => {
+        const role=getRoleInfo(i);
+        return `${role.label} ${role.pct}  |  ${c.name}  |  ${c.hex}  |  ≈ Pantone ${findNearestPantone(c.hex)}`;
+    });
+    const nb = NEUTRAL_BASES[currentSeason];
+    lines.push(`Base —  |  ${nb.name}  |  ${nb.hex}`);
+    const text = lines.join('\n');
+    navigator.clipboard.writeText(text).catch(()=>{
+        const ta=document.createElement('textarea'); ta.value=text;
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+    });
+    const btn=document.querySelector('.copy-all-btn'), orig=btn.innerHTML;
+    btn.textContent='✓ Скопировано';
+    setTimeout(()=>{btn.innerHTML=orig;}, 2000);
+}
+
+// ── Шаг 7: переключение раскрытия карточки
 function toggleSavedCard(card) {
     card.classList.toggle('open');
     const btn = card.querySelector('.saved-expand-btn');
