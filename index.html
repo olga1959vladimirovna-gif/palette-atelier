@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palette Atelier — Генератор модных палитр</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent:       #5A9A6A;
+            --accent-rgb:   90,154,106;
+            --bg:           #EEF6EC;
+            --bg-2:         #D8EDCC;
+            --text:         #1A1A1A;
+            --muted:        #A89890;
+            --text-soft:    #2A5C38;
+            --text-muted:   #4A7A56;
+            --line-soft:    #A8CCA8;
+            --line:         #E8E0D8;
+            --transition:   background 0.7s ease, color 0.4s ease;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        /* ══════════════════════════════
+           HERO
+        ══════════════════════════════ */
+        .hero {
+            position: relative;
+            min-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 7vw;
+            overflow: hidden;
+            background: linear-gradient(150deg, var(--bg) 0%, var(--bg-2) 100%);
+            transition: var(--transition);
+        }
+
+        /* Огромный водяной знак сезона */
+        .hero-watermark {
+            position: absolute;
+            top: 50%;
+            right: -2vw;
+            transform: translateY(-50%);
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(120px, 18vw, 260px);
+            font-weight: 700;
+            letter-spacing: -4px;
+            color: rgba(var(--accent-rgb), 0.07);
+            pointer-events: none;
+            user-select: none;
+            line-height: 1;
+            transition: color 0.7s ease, opacity 0.5s;
+            white-space: nowrap;
+        }
+
+        /* Верхняя строка */
+        .hero-topbar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 28px 7vw;
+            border-bottom: 1px solid rgba(var(--accent-rgb), 0.35);
+        }
+
+        .brand {
+            font-size: 10px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            font-weight: 400;
+            color: var(--text-soft);
+            transition: color 0.7s;
+        }
+
+        .collection-tag {
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--text-soft);
+            transition: color 0.7s;
+        }
+
+        /* Декоративная линия-акцент */
+        .hero-accent-line {
+            width: 48px;
+            height: 2px;
+            background: var(--accent);
+            margin-bottom: 40px;
+            transition: background 0.7s;
+        }
+
+        /* Главный заголовок */
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(52px, 8vw, 110px);
+            font-weight: 400;
+            line-height: 1.0;
+            letter-spacing: -1px;
+            margin-bottom: 32px;
+            color: var(--text);
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--accent);
+            transition: color 0.7s;
+        }
+
+        .hero-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(18px, 2.5vw, 26px);
+            font-weight: 300;
+            font-style: italic;
+            color: var(--text-muted);
+            margin-bottom: 60px;
+            max-width: 480px;
+            line-height: 1.5;
+            transition: color 0.7s;
+        }
+
+        /* CTA кнопка прокрутки */
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--text-soft);
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: 'Montserrat', sans-serif;
+            transition: gap 0.2s, color 0.7s;
+        }
+
+        .hero-cta:hover { gap: 24px; }
+
+        .hero-cta-arrow {
+            width: 48px;
+            height: 1px;
+            background: var(--accent);
+            position: relative;
+            transition: width 0.2s, background 0.7s;
+        }
+
+        .hero-cta-arrow::after {
+            content: '';
+            position: absolute;
+            right: 0; top: -3px;
+            width: 6px; height: 6px;
+            border-right: 1px solid var(--accent);
+            border-bottom: 1px solid var(--accent);
+            transform: rotate(-45deg);
+            transition: border-color 0.7s;
+        }
+
+        .hero-cta:hover .hero-cta-arrow { width: 64px; }
+
+        /* ══════════════════════════════
+           MAIN CONTENT
+        ══════════════════════════════ */
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 100px 7vw 120px;
+        }
+
+        .step-label {
+            font-size: 9px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: color 0.7s;
+        }
+
+        .step-label::after {
+            content: '';
+            flex: 1;
+            max-width: 40px;
+            height: 1px;
+            background: var(--accent);
+            transition: background 0.7s;
+        }
+
+        /* ══════════════════════════════
+           SEASON SELECTOR
+        ══════════════════════════════ */
+        .season-section { margin-bottom: 80px; }
+
+        .season-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 400;
+            margin-bottom: 40px;
+        }
+
+        .season-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            background: var(--line);
+        }
+
+        .season-btn {
+            background: var(--bg);
+            border: none;
+            cursor: pointer;
+            padding: 32px 20px 28px;
+            text-align: left;
+            transition: background 0.25s;
+            font-family: 'Montserrat', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .season-btn::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease, background 0.7s;
+        }
+
+        .season-btn:hover { background: rgba(var(--accent-rgb), 0.04); }
+        .season-btn:hover::before { transform: scaleX(0.5); }
+
+        .season-btn.active { background: white; }
+        .season-btn.active::before { transform: scaleX(1); }
+
+        /* Мини-свотчи сезона */
+        .season-swatches {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 16px;
+        }
+
+        .season-swatch {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .season-name-text {
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: var(--text);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .season-name-fr {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 13px;
+            font-style: italic;
+            color: var(--muted);
+        }
+
+        /* ══════════════════════════════
+           MOOD INPUT
+        ══════════════════════════════ */
+        .mood-section { margin-bottom: 80px; }
+
+        .mood-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 400;
+            margin-bottom: 48px;
+        }
+
+        .mood-input-wrap {
+            position: relative;
+            margin-bottom: 28px;
+        }
+
+        .mood-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--line);
+            padding: 16px 0 20px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(26px, 4vw, 48px);
+            font-style: italic;
+            font-weight: 300;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .mood-input::placeholder { color: rgba(var(--accent-rgb), 0.3); }
+
+        .mood-input-line {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.4s ease, background 0.7s;
+        }
+
+        .mood-input:focus ~ .mood-input-line { width: 100%; }
+
+        .mood-hints {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .hint-tag {
+            padding: 8px 18px;
+            border: 1px solid var(--line-soft);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 15px;
+            font-style: italic;
+            cursor: pointer;
+            transition: all 0.25s;
+            color: var(--text-soft);
+            background: rgba(255,255,255,0.5);
+        }
+
+        .hint-tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(var(--accent-rgb), 0.08);
+        }
+
+        .hint-tag.active {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: white;
+        }
+
+        .mood-category {
+            width: 100%;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin: 16px 0 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--line-soft);
+            transition: color 0.7s, border-color 0.7s;
+        }
+
+        .mood-category:first-child { margin-top: 0; }
+
+        .hint-tag-custom {
+            padding: 8px 22px;
+            border: 1px solid var(--accent);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 15px;
+            font-style: italic;
+            cursor: pointer;
+            transition: all 0.25s;
+            color: var(--text-soft);
+            background: rgba(var(--accent-rgb), 0.08);
+            font-weight: 400;
+        }
+
+        .hint-tag-custom:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* ══════════════════════════════
+           GENERATE BUTTON
+        ══════════════════════════════ */
+        .generate-wrap {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .generate-btn {
+            display: inline-block;
+            padding: 22px 64px;
+            background: var(--text);
+            color: white;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s;
+        }
+
+        .generate-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            transform: translateX(-101%);
+            transition: transform 0.4s ease, background 0.7s;
+        }
+
+        .generate-btn:hover::before { transform: translateX(0); }
+
+        .generate-btn span { position: relative; z-index: 1; }
+
+        /* ══════════════════════════════
+           РЕЗУЛЬТАТ — ПАЛИТРА
+        ══════════════════════════════ */
+        .palette-result { display: none; }
+
+        .palette-result.visible {
+            display: block;
+            animation: revealUp 0.6s ease both;
+        }
+
+        @keyframes revealUp {
+            from { opacity: 0; transform: translateY(32px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .palette-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 36px;
+        }
+
+        .palette-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(28px, 5vw, 52px);
+            font-style: italic;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .palette-meta-block { text-align: right; }
+
+        .palette-meta-season {
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 4px;
+            transition: color 0.7s;
+        }
+
+        .palette-meta-mood {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: var(--muted);
+        }
+
+        .mood-detected {
+            margin-bottom: 32px;
+            padding: 14px 0;
+            border-left: 2px solid var(--accent);
+            padding-left: 20px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: var(--muted);
+            transition: border-color 0.7s;
+        }
+
+        /* ══════════════════════════════
+           ЦВЕТОВЫЕ КАРТОЧКИ
+        ══════════════════════════════ */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 2px;
+            margin-bottom: 32px;
+        }
+
+        .color-card {
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            background: white;
+        }
+
+        .color-swatch {
+            height: 300px;
+            width: 100%;
+            display: block;
+            position: relative;
+            transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .color-card:hover .color-swatch {
+            transform: scaleY(1.04);
+            transform-origin: bottom;
+        }
+
+        /* Название на самом свотче */
+        .swatch-label {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 48px 14px 14px;
+            background: linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 100%);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 13px;
+            font-style: italic;
+            line-height: 1.3;
+            /* цвет текста задаётся через JS */
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .color-hex-row {
+            padding: 12px 14px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .color-hex-val {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+
+        .copy-icon {
+            width: 14px;
+            height: 14px;
+            opacity: 0.3;
+            transition: opacity 0.2s;
+        }
+
+        .color-card:hover .copy-icon { opacity: 1; }
+
+        /* Вспышка «скопировано» */
+        .copied-flash {
+            position: absolute;
+            inset: 0;
+            background: rgba(var(--accent-rgb), 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .copied-flash.show { opacity: 1; }
+
+        .copied-flash span {
+            color: white;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Анимация появления карточек */
+        .color-card { animation: cardIn 0.5s ease both; }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ══════════════════════════════
+           КНОПКИ ДЕЙСТВИЙ
+        ══════════════════════════════ */
+        .palette-actions {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 16px 12px;
+            border: none;
+            background: #F5F2EE;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            color: var(--muted);
+        }
+
+        .action-btn:hover { background: var(--text); color: white; }
+
+        .action-btn.save-btn { background: var(--text); color: white; }
+        .action-btn.save-btn:hover { background: var(--accent); }
+        .action-btn.save-btn.saved { background: #4A7856; color: white; }
+
+        /* ══════════════════════════════
+           МОИ ПАЛИТРЫ
+        ══════════════════════════════ */
+        .saved-section {
+            margin-top: 100px;
+            display: none;
+        }
+
+        .saved-section.visible { display: block; }
+
+        .saved-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 40px;
+        }
+
+        .saved-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(24px, 3vw, 38px);
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .saved-count {
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            transition: color 0.7s;
+        }
+
+        .saved-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .saved-card {
+            display: grid;
+            grid-template-columns: 220px 1fr auto;
+            align-items: stretch;
+            background: white;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .saved-card:hover {
+            box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+            z-index: 1;
+            position: relative;
+        }
+
+        .saved-swatches {
+            display: flex;
+            height: 80px;
+        }
+
+        .saved-swatch { flex: 1; }
+
+        .saved-info {
+            padding: 20px 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-left: 1px solid var(--line);
+        }
+
+        .saved-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-style: italic;
+            font-weight: 400;
+            margin-bottom: 6px;
+        }
+
+        .saved-meta {
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .saved-actions {
+            display: flex;
+            align-items: stretch;
+            border-left: 1px solid var(--line);
+        }
+
+        .saved-action {
+            padding: 0 24px;
+            background: transparent;
+            border: none;
+            border-left: 1px solid var(--line);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            color: var(--muted);
+        }
+
+        .saved-action:first-child { border-left: none; }
+        .saved-action:hover { background: var(--text); color: white; }
+        .saved-action.delete:hover { background: #8B0000; color: white; }
+
+        /* ══════════════════════════════
+           FOOTER
+        ══════════════════════════════ */
+        footer {
+            margin-top: 120px;
+            border-top: 1px solid var(--line);
+            padding: 40px 7vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-brand {
+            font-size: 9px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .footer-hint {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--muted);
+        }
+
+        /* ══════════════════════════════
+           RESPONSIVE
+        ══════════════════════════════ */
+        @media (max-width: 768px) {
+            .hero { min-height: 70vh; padding: 0 5vw; }
+            main  { padding: 60px 5vw 80px; }
+            .color-grid { grid-template-columns: repeat(3, 1fr); }
+            .season-grid { grid-template-columns: repeat(2, 1fr); }
+            .palette-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+            .palette-meta-block { text-align: left; }
+            .saved-card { grid-template-columns: 1fr; }
+            .saved-swatches { height: 60px; }
+            .saved-actions { border-left: none; border-top: 1px solid var(--line); }
+            .hero-watermark { font-size: 80px; opacity: 0.5; }
+            footer { flex-direction: column; gap: 12px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="hero">
+    <div class="hero-topbar">
+        <span class="brand">Palette Atelier</span>
+        <span class="collection-tag">Collection 2026</span>
+    </div>
+
+    <div class="hero-watermark" id="heroWatermark">PRINTEMPS</div>
+
+    <div class="hero-accent-line"></div>
+
+    <h1 class="hero-title">
+        L'Art<br>des <em>Couleurs</em>
+    </h1>
+
+    <p class="hero-subtitle">
+        Создайте палитру, которая говорит на языке моды — для коллекции, ткани или вдохновения.
+    </p>
+
+    <button class="hero-cta" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">
+        Начать
+        <span class="hero-cta-arrow"></span>
+    </button>
+</section>
+
+<!-- ══ GENERATOR ══ -->
+<main id="generator">
+
+    <!-- Шаг 1: Сезон -->
+    <section class="season-section">
+        <div class="step-label">01</div>
+        <h2 class="season-heading">Выберите сезон</h2>
+
+        <div class="season-grid">
+            <button class="season-btn active" data-season="spring" onclick="selectSeason(this)">
+                <div class="season-swatches">
+                    <div class="season-swatch" style="background:#F7CAC9"></div>
+                    <div class="season-swatch" style="background:#A8D5E2"></div>
+                    <div class="season-swatch" style="background:#C5D5A8"></div>
+                    <div class="season-swatch" style="background:#D8C8E8"></div>
+                </div>
+                <span class="season-name-text">Весна</span>
+                <span class="season-name-fr">Printemps</span>
+            </button>
+            <button class="season-btn" data-season="summer" onclick="selectSeason(this)">
+                <div class="season-swatches">
+                    <div class="season-swatch" style="background:#4ECDC4"></div>
+                    <div class="season-swatch" style="background:#45B7D1"></div>
+                    <div class="season-swatch" style="background:#FFEAA7"></div>
+                    <div class="season-swatch" style="background:#96CEB4"></div>
+                </div>
+                <span class="season-name-text">Лето</span>
+                <span class="season-name-fr">Été</span>
+            </button>
+            <button class="season-btn" data-season="autumn" onclick="selectSeason(this)">
+                <div class="season-swatches">
+                    <div class="season-swatch" style="background:#C0392B"></div>
+                    <div class="season-swatch" style="background:#D4845A"></div>
+                    <div class="season-swatch" style="background:#B7860B"></div>
+                    <div class="season-swatch" style="background:#2C5F2E"></div>
+                </div>
+                <span class="season-name-text">Осень</span>
+                <span class="season-name-fr">Automne</span>
+            </button>
+            <button class="season-btn" data-season="winter" onclick="selectSeason(this)">
+                <div class="season-swatches">
+                    <div class="season-swatch" style="background:#1B2A4A"></div>
+                    <div class="season-swatch" style="background:#6D2B8F"></div>
+                    <div class="season-swatch" style="background:#87CEEB"></div>
+                    <div class="season-swatch" style="background:#C0C0C0"></div>
+                </div>
+                <span class="season-name-text">Зима</span>
+                <span class="season-name-fr">Hiver</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Шаг 2: Настроение -->
+    <section class="mood-section">
+        <div class="step-label">02</div>
+        <h2 class="mood-heading">Опишите настроение</h2>
+
+        <div class="mood-input-wrap">
+            <input
+                type="text"
+                class="mood-input"
+                id="moodInput"
+                placeholder="морской закат, цветущий сад, золотая осень..."
+                onkeydown="if(event.key==='Enter') generatePalette()"
+            >
+            <div class="mood-input-line"></div>
+        </div>
+
+        <div class="mood-hints" id="moodHints">
+
+            <span class="mood-category">Природа и пейзажи</span>
+            <span class="hint-tag" onclick="setMood('морской закат')">морской закат</span>
+            <span class="hint-tag" onclick="setMood('цветущий сад')">цветущий сад</span>
+            <span class="hint-tag" onclick="setMood('альпийский луг')">альпийский луг</span>
+            <span class="hint-tag" onclick="setMood('тосканские холмы')">тосканские холмы</span>
+            <span class="hint-tag" onclick="setMood('лесные ягоды')">лесные ягоды</span>
+            <span class="hint-tag" onclick="setMood('первый снег')">первый снег</span>
+            <span class="hint-tag" onclick="setMood('средиземный бриз')">средиземный бриз</span>
+            <span class="hint-tag" onclick="setMood('берег океана')">берег океана</span>
+
+            <span class="mood-category">Цветы и сады</span>
+            <span class="hint-tag" onclick="setMood('японская сакура')">японская сакура</span>
+            <span class="hint-tag" onclick="setMood('чайная роза')">чайная роза</span>
+            <span class="hint-tag" onclick="setMood('пыльная роза')">пыльная роза</span>
+            <span class="hint-tag" onclick="setMood('лавандовые поля')">лавандовые поля</span>
+            <span class="hint-tag" onclick="setMood('нежная акварель')">нежная акварель</span>
+            <span class="hint-tag" onclick="setMood('ботанический сад')">ботанический сад</span>
+
+            <span class="mood-category">Осень и тепло</span>
+            <span class="hint-tag" onclick="setMood('золотая осень')">золотая осень</span>
+            <span class="hint-tag" onclick="setMood('тыквенный пряник')">тыквенный пряник</span>
+            <span class="hint-tag" onclick="setMood('яблочный сидр')">яблочный сидр</span>
+            <span class="hint-tag" onclick="setMood('пряный кофе')">пряный кофе</span>
+            <span class="hint-tag" onclick="setMood('дикий мёд')">дикий мёд</span>
+            <span class="hint-tag" onclick="setMood('листопад в парке')">листопад в парке</span>
+
+            <span class="mood-category">Город и вечер</span>
+            <span class="hint-tag" onclick="setMood('городской туман')">городской туман</span>
+            <span class="hint-tag" onclick="setMood('ночной Париж')">ночной Париж</span>
+            <span class="hint-tag" onclick="setMood('дождливый вечер')">дождливый вечер</span>
+            <span class="hint-tag" onclick="setMood('белые ночи')">белые ночи</span>
+            <span class="hint-tag" onclick="setMood('огни витрин')">огни витрин</span>
+
+            <span class="mood-category">Роскошь и стиль</span>
+            <span class="hint-tag" onclick="setMood('полночная роскошь')">полночная роскошь</span>
+            <span class="hint-tag" onclick="setMood('арктический лёд')">арктический лёд</span>
+            <span class="hint-tag" onclick="setMood('бархат и шёлк')">бархат и шёлк</span>
+            <span class="hint-tag" onclick="setMood('золото и слоновая кость')">золото и слоновая кость</span>
+            <span class="hint-tag" onclick="setMood('тёмный сапфир')">тёмный сапфир</span>
+
+            <span class="mood-category">Ваш вариант</span>
+            <button class="hint-tag-custom" onclick="activateCustomMood()">✦ &nbsp;Ваш выбор</button>
+
+        </div>
+    </section>
+
+    <!-- Кнопка -->
+    <div class="generate-wrap">
+        <button class="generate-btn" onclick="generatePalette()">
+            <span>Создать палитру</span>
+        </button>
+    </div>
+
+    <!-- Результат -->
+    <div class="palette-result" id="paletteResult">
+
+        <div class="mood-detected" id="moodDetected"></div>
+
+        <div class="palette-header">
+            <div class="palette-title" id="paletteName"></div>
+            <div class="palette-meta-block">
+                <div class="palette-meta-season" id="paletteSeason"></div>
+                <div class="palette-meta-mood" id="paletteMood"></div>
+            </div>
+        </div>
+
+        <div class="color-grid" id="colorGrid"></div>
+
+        <div class="palette-actions">
+            <button class="action-btn" onclick="generatePalette()">↻ &nbsp;Обновить</button>
+            <button class="action-btn save-btn" id="saveBtn" onclick="savePalette()">♥ &nbsp;Сохранить</button>
+            <button class="action-btn" onclick="downloadPalette()">↓ &nbsp;Скачать PNG</button>
+        </div>
+
+    </div>
+
+    <!-- Мои палитры -->
+    <div class="saved-section" id="savedSection">
+        <div class="saved-header">
+            <div class="saved-title">Мои палитры</div>
+            <div class="saved-count" id="savedCount"></div>
+        </div>
+        <div class="saved-grid" id="savedGrid"></div>
+    </div>
+
+</main>
+
+<footer>
+    <span class="footer-brand">Palette Atelier &nbsp;·&nbsp; 2026</span>
+    <span class="footer-hint">Нажмите на цвет, чтобы скопировать HEX</span>
+</footer>
+
+<script>
+// ════════════════════════════════════════════════
+//  СЕЗОННЫЕ ТЕМЫ
+// ════════════════════════════════════════════════
+const SEASON_THEMES = {
+    spring: {
+        accent: '#5A9A6A', accentRgb: '90,154,106',
+        bg: '#EEF6EC',     bg2: '#D8EDCC',
+        watermark: 'PRINTEMPS',
+        textSoft: '#2A5C38',   // тёмно-зелёный
+        textMuted: '#4A7A56',
+        lineSoft: '#A8CCA8',
+    },
+    summer: {
+        accent: '#45B7D1', accentRgb: '69,183,209',
+        bg: '#E4F8F5',     bg2: '#B8E8D8',
+        watermark: 'ÉTÉ',
+        textSoft: '#0B3D38',   // тёмный морской, высокий контраст
+        textMuted: '#1A5A50',
+        lineSoft: '#7CCCC0',
+    },
+    autumn: {
+        accent: '#C05A18', accentRgb: '192,90,24',
+        bg: '#FAF0E0',     bg2: '#F0C888',
+        watermark: 'AUTOMNE',
+        textSoft: '#6B2A00',   // тёмный тыквенный
+        textMuted: '#9A4A10',
+        lineSoft: '#D4A060',
+    },
+    winter: {
+        accent: '#3858A0', accentRgb: '56,88,160',
+        bg: '#F0F2F8',     bg2: '#E0E8F6',
+        watermark: 'HIVER',
+        textSoft: '#1A2A6A',   // тёмный синий
+        textMuted: '#2A4280',
+        lineSoft: '#98A8D8',
+    },
+};
+
+function applyTheme(season) {
+    const t = SEASON_THEMES[season];
+    const r = document.documentElement;
+    r.style.setProperty('--accent',     t.accent);
+    r.style.setProperty('--accent-rgb', t.accentRgb);
+    r.style.setProperty('--bg',         t.bg);
+    r.style.setProperty('--bg-2',       t.bg2);
+    r.style.setProperty('--text-soft',  t.textSoft);
+    r.style.setProperty('--text-muted', t.textMuted);
+    r.style.setProperty('--line-soft',  t.lineSoft);
+    document.getElementById('heroWatermark').textContent = t.watermark;
+    document.querySelector('.hero').style.background =
+        `linear-gradient(150deg, ${t.bg} 0%, ${t.bg2} 100%)`;
+}
+
+// ════════════════════════════════════════════════
+//  БАЗА ЦВЕТОВ
+// ════════════════════════════════════════════════
+const PALETTES = {
+    spring: {
+        romantic: [
+            { hex: '#F7CAC9', name: 'Pétale de Rose' },
+            { hex: '#E8B4BD', name: 'Blush Dior' },
+            { hex: '#C9B1D0', name: 'Lilas Givenchy' },
+            { hex: '#F4D6E0', name: 'Poudre Chanel' },
+            { hex: '#A8C5B5', name: 'Menthe Printanière' },
+            { hex: '#F2E6D9', name: 'Satin Ivoire' },
+            { hex: '#DDA8C0', name: 'Pivoine Douce' },
+            { hex: '#C5D8C8', name: 'Jade Pâle' },
+        ],
+        ocean: [
+            { hex: '#A8D5E2', name: 'Ciel Marin' },
+            { hex: '#7DBFCC', name: 'Lagune Azzaro' },
+            { hex: '#B5D5C5', name: 'Écume Verte' },
+            { hex: '#D4EAF0', name: 'Brume Côtière' },
+            { hex: '#E8C5B8', name: 'Coquillage Rosé' },
+            { hex: '#F0E8D8', name: 'Sable Blanc' },
+            { hex: '#9ECFD8', name: 'Mer Calme' },
+            { hex: '#C8E0D8', name: 'Jade Marin' },
+        ],
+        garden: [
+            { hex: '#C5D5A8', name: 'Feuille Tendre' },
+            { hex: '#F0C5A8', name: 'Abricot Fleuri' },
+            { hex: '#E8D5A8', name: 'Mimosa Doux' },
+            { hex: '#D5C5E8', name: 'Glycine Pâle' },
+            { hex: '#A8D5C5', name: 'Jade Botanique' },
+            { hex: '#F5E8C8', name: 'Crème Fleurie' },
+            { hex: '#D8E8C0', name: 'Herbe Nouvelle' },
+            { hex: '#F0D8C8', name: 'Pêche Printanière' },
+        ],
+        neutral: [
+            { hex: '#F2EAE2', name: 'Écru Naturel' },
+            { hex: '#E5D5C8', name: 'Lait de Rose' },
+            { hex: '#C8D8CC', name: 'Sauge Claire' },
+            { hex: '#D8C8E8', name: 'Mauve Velouté' },
+            { hex: '#E8D8C0', name: 'Cachemire Rosé' },
+            { hex: '#B8CCD8', name: 'Ciel Pastel' },
+            { hex: '#D8D0C8', name: 'Lin Doux' },
+            { hex: '#C0C8B8', name: 'Gris Lichen' },
+        ],
+    },
+    summer: {
+        romantic: [
+            { hex: '#FF6B9D', name: 'Rose Ibiza' },
+            { hex: '#FF8E72', name: 'Corail Sunset' },
+            { hex: '#FFC3A0', name: 'Pêche Dorée' },
+            { hex: '#FFAAA5', name: 'Flamingo Versace' },
+            { hex: '#A8E6CE', name: 'Jade Tropical' },
+            { hex: '#FFD3B6', name: 'Champagne Chaud' },
+            { hex: '#F8A5C2', name: 'Bougainvillée' },
+            { hex: '#FFECD2', name: 'Abricot Solaire' },
+        ],
+        ocean: [
+            { hex: '#4ECDC4', name: 'Turquoise Côtier' },
+            { hex: '#45B7D1', name: 'Océan Azur' },
+            { hex: '#96CEB4', name: 'Mer Émeraude' },
+            { hex: '#88D8C0', name: 'Vague Tropicale' },
+            { hex: '#F7DB81', name: 'Soleil Dorado' },
+            { hex: '#FFEAA7', name: 'Sable Chaud' },
+            { hex: '#74B9FF', name: 'Lagon Clair' },
+            { hex: '#55EFC4', name: 'Menthe Marine' },
+        ],
+        garden: [
+            { hex: '#FFD93D', name: 'Tournesol Miu Miu' },
+            { hex: '#6BCB77', name: 'Herbe Fraîche' },
+            { hex: '#FF6B6B', name: 'Coquelicot Vif' },
+            { hex: '#4D96FF', name: 'Bleuet Estival' },
+            { hex: '#F9C74F', name: 'Maïs Doré' },
+            { hex: '#90BE6D', name: 'Feuillage Estival' },
+            { hex: '#F8961E', name: 'Pavot Orange' },
+            { hex: '#43AA8B', name: 'Basilic Frais' },
+        ],
+        neutral: [
+            { hex: '#F4A261', name: 'Ambre Chaud' },
+            { hex: '#E9C46A', name: 'Miel Naturel' },
+            { hex: '#264653', name: 'Marine Profond' },
+            { hex: '#2A9D8F', name: 'Sarcelle Côtier' },
+            { hex: '#E76F51', name: 'Terracotta Viva' },
+            { hex: '#F2CC8F', name: 'Paille Blonde' },
+            { hex: '#D4A5A5', name: 'Brique Rose' },
+            { hex: '#A8DADC', name: 'Eau Douce' },
+        ],
+    },
+    autumn: {
+        romantic: [
+            { hex: '#C0392B', name: 'Bourgogne Intense' },
+            { hex: '#922B21', name: 'Velours Cramoisi' },
+            { hex: '#D4845A', name: 'Terracotta Gucci' },
+            { hex: '#C9956C', name: 'Bronze Romain' },
+            { hex: '#8B6F47', name: 'Marron Velouté' },
+            { hex: '#DEB887', name: 'Sable Doré' },
+            { hex: '#A0354C', name: 'Grenat Profond' },
+            { hex: '#C47D5E', name: 'Cuivre Brûlé' },
+        ],
+        forest: [
+            { hex: '#2C5F2E', name: 'Forêt Profonde' },
+            { hex: '#4A7856', name: 'Mousse Ancienne' },
+            { hex: '#8B7355', name: 'Écorce Naturelle' },
+            { hex: '#D4A853', name: 'Feuille Dorée' },
+            { hex: '#A0522D', name: 'Châtaignier' },
+            { hex: '#6B8E23', name: 'Olivier Toscan' },
+            { hex: '#556B2F', name: 'Kaki Forestier' },
+            { hex: '#BC8A5F', name: 'Noisette Douce' },
+        ],
+        urban: [
+            { hex: '#B7860B', name: 'Moutarde Bottega' },
+            { hex: '#8B6914', name: 'Safran Sombre' },
+            { hex: '#704214', name: 'Cognac Burberry' },
+            { hex: '#A0522D', name: 'Rouille Industrielle' },
+            { hex: '#CC7722', name: 'Ocre Brûlé' },
+            { hex: '#7B5E52', name: 'Brique Ancienne' },
+            { hex: '#5C4A3C', name: 'Taupe Chaud' },
+            { hex: '#D4956A', name: 'Caramel Urbain' },
+        ],
+        neutral: [
+            { hex: '#C4A882', name: 'Camel Loro Piana' },
+            { hex: '#8B7355', name: 'Noisette Max Mara' },
+            { hex: '#A8896C', name: 'Sable de Toscane' },
+            { hex: '#6B5344', name: 'Espresso Armani' },
+            { hex: '#D4C5B0', name: 'Lin Naturel' },
+            { hex: '#B8A99A', name: 'Pierre Douce' },
+            { hex: '#9E8777', name: 'Grès Pâle' },
+            { hex: '#E0D0BC', name: 'Laine Précieuse' },
+        ],
+    },
+    winter: {
+        romantic: [
+            { hex: '#8B0000', name: 'Rubis Cartier' },
+            { hex: '#6D2B8F', name: 'Améthyste Royale' },
+            { hex: '#C0C8D8', name: 'Givre Argenté' },
+            { hex: '#1B2A4A', name: 'Minuit Dior' },
+            { hex: '#E8E0F0', name: 'Nacre Lunaire' },
+            { hex: '#4A0E4E', name: 'Prune Valentino' },
+            { hex: '#B03060', name: 'Cerise Nocturne' },
+            { hex: '#D4B8D8', name: 'Lavande Cristal' },
+        ],
+        ocean: [
+            { hex: '#1B3A6B', name: 'Nuit Marine' },
+            { hex: '#2F5496', name: 'Saphir Bulgari' },
+            { hex: '#87CEEB', name: 'Glace Arctique' },
+            { hex: '#B0C4DE', name: 'Acier Pâle' },
+            { hex: '#4682B4', name: 'Cobalt Hivernal' },
+            { hex: '#E8F0F8', name: 'Blanc Nordique' },
+            { hex: '#5D8AA8', name: 'Ciel Polaire' },
+            { hex: '#A2C4C9', name: 'Fjord Glacé' },
+        ],
+        urban: [
+            { hex: '#1A1A1A', name: 'Charbon Givenchy' },
+            { hex: '#2F4F4F', name: 'Ardoise Zegna' },
+            { hex: '#708090', name: 'Acier Graphite' },
+            { hex: '#C0C0C0', name: 'Platine Brillant' },
+            { hex: '#36454F', name: 'Anthracite Foncé' },
+            { hex: '#DCDCDC', name: 'Gris Perle' },
+            { hex: '#4A4A4A', name: 'Asphalte Doux' },
+            { hex: '#B8B8B8', name: 'Mercure Pâle' },
+        ],
+        neutral: [
+            { hex: '#F5F5F5', name: 'Blanc Optique' },
+            { hex: '#E8E0D8', name: 'Ivoire Hivernal' },
+            { hex: '#B8B8C8', name: 'Brume Grise' },
+            { hex: '#8888A8', name: 'Lavande Froide' },
+            { hex: '#2C2C3C', name: 'Nuit Profonde' },
+            { hex: '#C8B8B8', name: 'Rose Cendré' },
+            { hex: '#D8D8E8', name: 'Givre Lilas' },
+            { hex: '#A0A0B8', name: 'Acier Doux' },
+        ],
+    },
+};
+
+const MOOD_KEYWORDS = {
+    ocean:    { label: 'Морское настроение',      words: ['морской','море','океан','волна','прибой','бирюза','лазурь','риф','атлантик','средиземный','залив','прибрежный'] },
+    romantic: { label: 'Романтическое настроение', words: ['романтика','роза','розовый','цветок','цветущий','нежный','любовь','закат','рассвет','пастель','акварель','бутон','сакура','пион','тюльпан','лепесток'] },
+    garden:   { label: 'Природное настроение',     words: ['сад','природа','трава','луг','ботанический','лист','листья','зелёный','зелень','цветы','парк','оранжерея','поляна'] },
+    urban:    { label: 'Городское настроение',     words: ['город','урбан','метро','дождь','туман','минимал','графит','асфальт','бетон','улица','серый','индустриальн','стекло','мегаполис','небоскрёб','ночной'] },
+    luxury:   { label: 'Роскошное настроение',     words: ['роскошь','бархат','золото','ночь','полночь','глубокий','тёмный','сумерки','вечер','гламур','люкс','элитный','богатый','вино','бордо','слива','аметист'] },
+    forest:   { label: 'Осеннее лесное настроение',words: ['лес','хвоя','осень','листопад','золотой','янтарь','гриб','мох','дерево','каштан','орех','дуб','ель','сосна','тосканск','умбрия','прованс'] },
+};
+
+const SEASON_MOOD_MAP = {
+    spring: { ocean:'ocean', romantic:'romantic', garden:'garden', forest:'garden',  urban:'neutral',  luxury:'romantic', neutral:'neutral' },
+    summer: { ocean:'ocean', romantic:'romantic', garden:'garden', forest:'garden',  urban:'neutral',  luxury:'neutral',  neutral:'neutral' },
+    autumn: { ocean:'neutral',romantic:'romantic',garden:'forest',forest:'forest',   urban:'urban',    luxury:'romantic', neutral:'neutral' },
+    winter: { ocean:'ocean', romantic:'romantic', garden:'neutral',forest:'neutral', urban:'urban',    luxury:'romantic', neutral:'neutral' },
+};
+
+const PALETTE_NAMES = {
+    spring: ['Jardin Secret','Printemps Éternel','Fleurs Sauvages','Aube Rose','Pré Fleuri'],
+    summer: ["Côte d'Azur",'Soleil Doré','Tropique Chic','Été Infini','Riviera Bleue'],
+    autumn: ["Forêt d'Or",'Crépuscule','Vendange Dorée',"Brumes d'Automne",'Ambre & Soie'],
+    winter: ['Nuit de Neige','Minuit Étoilé','Givre & Velours','Arctique Chic','Cristal Noir'],
+};
+
+const SEASON_LABELS = { spring:'Весна · Printemps', summer:'Лето · Été', autumn:'Осень · Automne', winter:'Зима · Hiver' };
+
+// ════════════════════════════════════════════════
+//  УТИЛИТЫ
+// ════════════════════════════════════════════════
+
+// ════════════════════════════════════════════════
+//  БАЗА ЦВЕТОВЫХ СЕМЕЙСТВ
+//  Когда пользователь просит «оттенки зелёного» —
+//  показываем именно зелёные, учитывая сезон
+// ════════════════════════════════════════════════
+
+const COLOR_PALETTES = {
+    green: {
+        spring: [
+            { hex: '#A8D5A2', name: 'Vert Printanier' },
+            { hex: '#C8E6C0', name: 'Menthe Tendre' },
+            { hex: '#7ABF88', name: 'Jade Frais' },
+            { hex: '#D4EED0', name: 'Écume Verte' },
+            { hex: '#5A9A6A', name: 'Feuille Nouvelle' },
+            { hex: '#E8F5E0', name: 'Lin Vert Pâle' },
+            { hex: '#88C59A', name: 'Sauge Claire' },
+            { hex: '#4A8060', name: 'Bambou Jeune' },
+        ],
+        summer: [
+            { hex: '#2DAA6A', name: 'Émeraude Tropical' },
+            { hex: '#55C888', name: 'Menthe Vive' },
+            { hex: '#88D8A8', name: 'Jade Marin' },
+            { hex: '#A8E6C0', name: 'Vague Verte' },
+            { hex: '#1E8050', name: 'Forêt Tropicale' },
+            { hex: '#6BCB90', name: 'Herbe Fraîche' },
+            { hex: '#C8F0D8', name: 'Écume Turquoise' },
+            { hex: '#3DA870', name: 'Malachite' },
+        ],
+        autumn: [
+            { hex: '#8A9A5B', name: 'Olive Toscan' },
+            { hex: '#6B7A3D', name: 'Kaki Sauvage' },
+            { hex: '#9BAF6A', name: 'Avocat Mûr' },
+            { hex: '#7A9B6A', name: 'Sauge Chaude' },
+            { hex: '#4A6741', name: 'Mousse Dorée' },
+            { hex: '#B8C99A', name: 'Lin Vert' },
+            { hex: '#5C7A48', name: 'Herbe Sèche' },
+            { hex: '#C8D4A0', name: 'Pistache Dorée' },
+        ],
+        winter: [
+            { hex: '#2C5F2E', name: 'Forêt Profonde' },
+            { hex: '#1A4A30', name: 'Épinette Sombre' },
+            { hex: '#4A7856', name: 'Mousse Hivernale' },
+            { hex: '#3D8B6F', name: 'Jade Polaire' },
+            { hex: '#6B8E6B', name: 'Vert Givré' },
+            { hex: '#A0B898', name: 'Sauge Froide' },
+            { hex: '#244A2C', name: 'Vert Impérial' },
+            { hex: '#7AA880', name: 'Eucalyptus' },
+        ],
+    },
+    blue: {
+        spring: [
+            { hex: '#A8C8E8', name: 'Ciel Printanier' },
+            { hex: '#C8DCF0', name: 'Bleu Layette' },
+            { hex: '#7AAECC', name: 'Lagon Pâle' },
+            { hex: '#B0CDE0', name: 'Ciel Aquarelle' },
+            { hex: '#5A90B8', name: 'Azur Doux' },
+            { hex: '#D8EAF5', name: 'Brume Bleue' },
+            { hex: '#88B8D8', name: 'Bleuet Printanier' },
+            { hex: '#4A80A8', name: 'Saphir Pâle' },
+        ],
+        summer: [
+            { hex: '#1B9BD4', name: 'Bleu Ibiza' },
+            { hex: '#45B7D1', name: 'Turquoise Côtier' },
+            { hex: '#74B9FF', name: 'Lagon Brillant' },
+            { hex: '#0D6A8C', name: 'Marine Profond' },
+            { hex: '#88D4EE', name: 'Écume Bleue' },
+            { hex: '#2F9DC0', name: 'Méditerranée' },
+            { hex: '#B8E8F5', name: 'Ciel Tropical' },
+            { hex: '#5ABCD8', name: 'Côte d\'Azur' },
+        ],
+        autumn: [
+            { hex: '#4A6B8A', name: 'Ardoise Bleue' },
+            { hex: '#2C4A6A', name: 'Denim Foncé' },
+            { hex: '#6A88A8', name: 'Acier Bleu' },
+            { hex: '#8AAAC0', name: 'Cachemire Bleu' },
+            { hex: '#3A5878', name: 'Encre Bleue' },
+            { hex: '#A8C0D4', name: 'Lin Bleu' },
+            { hex: '#1E3A58', name: 'Marine Profond' },
+            { hex: '#7090AA', name: 'Brume Marine' },
+        ],
+        winter: [
+            { hex: '#1B2A4A', name: 'Minuit Dior' },
+            { hex: '#2F5496', name: 'Saphir Bulgari' },
+            { hex: '#4682B4', name: 'Cobalt Hivernal' },
+            { hex: '#B0C4DE', name: 'Acier Pâle' },
+            { hex: '#1A3A6B', name: 'Nuit Marine' },
+            { hex: '#5D8AA8', name: 'Ciel Polaire' },
+            { hex: '#E0E8F5', name: 'Glace Nordique' },
+            { hex: '#3858A0', name: 'Outremer' },
+        ],
+    },
+    pink: {
+        spring: [
+            { hex: '#F7CAC9', name: 'Pétale de Rose' },
+            { hex: '#F5A0B0', name: 'Rose Printanière' },
+            { hex: '#E8B4BD', name: 'Blush Tendre' },
+            { hex: '#F0C0C8', name: 'Rose Poudré' },
+            { hex: '#DDA8C0', name: 'Pivoine Douce' },
+            { hex: '#FAD8DF', name: 'Rose Cristal' },
+            { hex: '#E87898', name: 'Rose Vif' },
+            { hex: '#F8E0E5', name: 'Rose Nacre' },
+        ],
+        summer: [
+            { hex: '#FF6B9D', name: 'Rose Ibiza' },
+            { hex: '#FF8EB8', name: 'Flamant Rose' },
+            { hex: '#FFAAA5', name: 'Corail Rosé' },
+            { hex: '#F8A5C2', name: 'Bougainvillée' },
+            { hex: '#FF5580', name: 'Rose Tropical' },
+            { hex: '#FFD0DC', name: 'Rose Pêche' },
+            { hex: '#E8609A', name: 'Fuchsia Doux' },
+            { hex: '#FFBBD0', name: 'Rose Pastel' },
+        ],
+        autumn: [
+            { hex: '#C87090', name: 'Rose Ancien' },
+            { hex: '#A05878', name: 'Rose Poudre Foncé' },
+            { hex: '#D4849A', name: 'Terracotta Rosé' },
+            { hex: '#B86880', name: 'Vieux Rose' },
+            { hex: '#E0A8B8', name: 'Blush Chaud' },
+            { hex: '#8A4A60', name: 'Rose Bordeaux' },
+            { hex: '#C8A0A8', name: 'Rose Cendré' },
+            { hex: '#904060', name: 'Rose Profond' },
+        ],
+        winter: [
+            { hex: '#C0C8D8', name: 'Givre Rosé' },
+            { hex: '#B03060', name: 'Rose Hivernal' },
+            { hex: '#D4B8D8', name: 'Lavande Rosée' },
+            { hex: '#8B2040', name: 'Grenat Rose' },
+            { hex: '#E8D0D8', name: 'Rose Glace' },
+            { hex: '#A04060', name: 'Cerise Froide' },
+            { hex: '#F0D0DC', name: 'Rose Arctique' },
+            { hex: '#784058', name: 'Prune Rosée' },
+        ],
+    },
+    red: {
+        spring: [
+            { hex: '#E87070', name: 'Corail Printanier' },
+            { hex: '#F0A080', name: 'Saumon Doux' },
+            { hex: '#D85858', name: 'Rouge Coquelicot' },
+            { hex: '#F0C0B0', name: 'Rose Saumon' },
+            { hex: '#C05050', name: 'Rouge Tulipe' },
+            { hex: '#F8A090', name: 'Corail Pétale' },
+            { hex: '#E85858', name: 'Vermillon Printanier' },
+            { hex: '#FFC0A8', name: 'Abricot Rosé' },
+        ],
+        summer: [
+            { hex: '#FF4444', name: 'Rouge Tropical' },
+            { hex: '#FF6B6B', name: 'Corail Vif' },
+            { hex: '#E83030', name: 'Tomate Mûre' },
+            { hex: '#FF8080', name: 'Saumon Estival' },
+            { hex: '#CC2020', name: 'Rouge Soleil' },
+            { hex: '#FF9090', name: 'Rose Corail' },
+            { hex: '#D44040', name: 'Cerise Vive' },
+            { hex: '#FFB0A0', name: 'Pêche Vive' },
+        ],
+        autumn: [
+            { hex: '#C0392B', name: 'Bourgogne Intense' },
+            { hex: '#922B21', name: 'Velours Cramoisi' },
+            { hex: '#A0354C', name: 'Grenat Profond' },
+            { hex: '#8B1A1A', name: 'Rouge Bordeaux' },
+            { hex: '#C47D5E', name: 'Cuivre Brûlé' },
+            { hex: '#7A2020', name: 'Vin Rouge' },
+            { hex: '#D4503C', name: 'Brique Rouge' },
+            { hex: '#9A2828', name: 'Cerise Sombre' },
+        ],
+        winter: [
+            { hex: '#8B0000', name: 'Rubis Cartier' },
+            { hex: '#6A0000', name: 'Bordeaux Noir' },
+            { hex: '#B01020', name: 'Grenat Hivernal' },
+            { hex: '#3C0010', name: 'Rouge Nuit' },
+            { hex: '#AA2030', name: 'Cerise Polaire' },
+            { hex: '#780010', name: 'Sang Profond' },
+            { hex: '#C83040', name: 'Rubis Froid' },
+            { hex: '#500020', name: 'Velours Nocturne' },
+        ],
+    },
+    orange: {
+        spring: [
+            { hex: '#F0C5A8', name: 'Abricot Fleuri' },
+            { hex: '#F8A870', name: 'Pêche Printanière' },
+            { hex: '#F5D0B0', name: 'Saumon Doux' },
+            { hex: '#E8A060', name: 'Abricot Doré' },
+            { hex: '#FFD3B6', name: 'Champagne Orangé' },
+            { hex: '#F0B880', name: 'Miel Pâle' },
+            { hex: '#FAC090', name: 'Mandarine Tendre' },
+            { hex: '#F8D8C0', name: 'Nectar Rosé' },
+        ],
+        summer: [
+            { hex: '#FF8E72', name: 'Corail Sunset' },
+            { hex: '#FF6B35', name: 'Orange Vif' },
+            { hex: '#F8961E', name: 'Mangue Soleil' },
+            { hex: '#FF9F1C', name: 'Safran Brillant' },
+            { hex: '#FFA040', name: 'Orange Tropical' },
+            { hex: '#E76F51', name: 'Terracotta Viva' },
+            { hex: '#FFB800', name: 'Ambre Chaud' },
+            { hex: '#FF7043', name: 'Papaye Mûre' },
+        ],
+        autumn: [
+            { hex: '#CC7722', name: 'Ocre Brûlé' },
+            { hex: '#D4845A', name: 'Terracotta Gucci' },
+            { hex: '#B86020', name: 'Citrouille Profond' },
+            { hex: '#C47D5E', name: 'Cuivre Automnal' },
+            { hex: '#E0905A', name: 'Orange Cannelle' },
+            { hex: '#A05020', name: 'Rouille Foncée' },
+            { hex: '#D4956A', name: 'Caramel Épicé' },
+            { hex: '#8B4513', name: 'Bois de Santal' },
+        ],
+        winter: [
+            { hex: '#C86020', name: 'Safran Hivernal' },
+            { hex: '#A04818', name: 'Brique Froide' },
+            { hex: '#D87840', name: 'Ambre Sombre' },
+            { hex: '#804010', name: 'Cognac Profond' },
+            { hex: '#B86840', name: 'Cuivre Givré' },
+            { hex: '#603010', name: 'Chocolat Orange' },
+            { hex: '#E09060', name: 'Corail Hivernal' },
+            { hex: '#904020', name: 'Rouille Polaire' },
+        ],
+    },
+    purple: {
+        spring: [
+            { hex: '#D5C5E8', name: 'Glycine Pâle' },
+            { hex: '#C8B0D8', name: 'Lavande Printanière' },
+            { hex: '#E0D0F0', name: 'Parme Tendre' },
+            { hex: '#B8A0CC', name: 'Iris Doux' },
+            { hex: '#DDA8D8', name: 'Lilas Rosé' },
+            { hex: '#F0E5F8', name: 'Mauve Poudré' },
+            { hex: '#C090C8', name: 'Améthyste Claire' },
+            { hex: '#E8C8E8', name: 'Pivoine Lilas' },
+        ],
+        summer: [
+            { hex: '#9B59B6', name: 'Violet Méditerranée' },
+            { hex: '#C878D8', name: 'Orchidée Tropicale' },
+            { hex: '#8E44AD', name: 'Améthyste Vive' },
+            { hex: '#D0A0E0', name: 'Mauve Estival' },
+            { hex: '#B060C8', name: 'Lavande Intense' },
+            { hex: '#E8B8F0', name: 'Glycine Légère' },
+            { hex: '#7A30A0', name: 'Prune Soleil' },
+            { hex: '#D898E8', name: 'Parme Brillant' },
+        ],
+        autumn: [
+            { hex: '#6D2B8F', name: 'Améthyste Royale' },
+            { hex: '#4A0E4E', name: 'Prune Valentino' },
+            { hex: '#784898', name: 'Violet Automnal' },
+            { hex: '#A060B8', name: 'Lilas Profond' },
+            { hex: '#582878', name: 'Raisin Foncé' },
+            { hex: '#C090CC', name: 'Mauve Chaud' },
+            { hex: '#3A1050', name: 'Aubergine Sombre' },
+            { hex: '#8A50A0', name: 'Iris Automnal' },
+        ],
+        winter: [
+            { hex: '#380060', name: 'Violet Minuit' },
+            { hex: '#4A0E4E', name: 'Nuit Violette' },
+            { hex: '#6D2B8F', name: 'Améthyste Glacée' },
+            { hex: '#D4B8D8', name: 'Lavande Cristal' },
+            { hex: '#5A1870', name: 'Prune Arctique' },
+            { hex: '#2A0040', name: 'Encre Violette' },
+            { hex: '#A070B8', name: 'Améthyste Froide' },
+            { hex: '#8080C0', name: 'Gris Parme' },
+        ],
+    },
+    yellow: {
+        spring: [
+            { hex: '#F7E87A', name: 'Mimosa Printanier' },
+            { hex: '#F5E8A0', name: 'Citron Pâle' },
+            { hex: '#F0D060', name: 'Jonquille Dorée' },
+            { hex: '#FAF0B0', name: 'Beurre Frais' },
+            { hex: '#E8D840', name: 'Tournesol Léger' },
+            { hex: '#F8F0C0', name: 'Vanille Claire' },
+            { hex: '#DDD020', name: 'Pissenlit' },
+            { hex: '#F5E8C8', name: 'Crème Dorée' },
+        ],
+        summer: [
+            { hex: '#FFD93D', name: 'Tournesol Vif' },
+            { hex: '#FFEAA7', name: 'Sable Chaud' },
+            { hex: '#F7DB81', name: 'Soleil Dorado' },
+            { hex: '#FFF176', name: 'Citron Brillant' },
+            { hex: '#F9C74F', name: 'Maïs Doré' },
+            { hex: '#FFE566', name: 'Safran Clair' },
+            { hex: '#F4D03F', name: 'Ambre Tropical' },
+            { hex: '#FFFACD', name: 'Blanc Citron' },
+        ],
+        autumn: [
+            { hex: '#D4A853', name: 'Feuille Dorée' },
+            { hex: '#B7860B', name: 'Moutarde Bottega' },
+            { hex: '#E9C46A', name: 'Miel Naturel' },
+            { hex: '#C8960C', name: 'Safran Profond' },
+            { hex: '#8B6914', name: 'Ocre Sombre' },
+            { hex: '#DAA520', name: 'Or Automnal' },
+            { hex: '#F0C040', name: 'Ambre Doré' },
+            { hex: '#A07808', name: 'Châtaigne Dorée' },
+        ],
+        winter: [
+            { hex: '#C8A820', name: 'Or Hivernal' },
+            { hex: '#A08010', name: 'Ocre Polaire' },
+            { hex: '#E8C840', name: 'Ambre Glacé' },
+            { hex: '#806808', name: 'Bronze Froid' },
+            { hex: '#D4B840', name: 'Or Givré' },
+            { hex: '#604800', name: 'Moutarde Sombre' },
+            { hex: '#F0D860', name: 'Citron Hivernal' },
+            { hex: '#886000', name: 'Cuir Doré' },
+        ],
+    },
+    neutral: {
+        spring: [
+            { hex: '#F2EAE2', name: 'Écru Naturel' },
+            { hex: '#E5D5C8', name: 'Lait de Rose' },
+            { hex: '#EDE0D4', name: 'Sable Rosé' },
+            { hex: '#F5EDD5', name: 'Crème Ivoire' },
+            { hex: '#D8CEC4', name: 'Grès Tendre' },
+            { hex: '#EAE0D8', name: 'Lin Doux' },
+            { hex: '#C8BEB5', name: 'Taupe Clair' },
+            { hex: '#F8F2E8', name: 'Blanc Crème' },
+        ],
+        summer: [
+            { hex: '#F2CC8F', name: 'Paille Blonde' },
+            { hex: '#E9C46A', name: 'Miel Doré' },
+            { hex: '#F4A261', name: 'Ambre Sable' },
+            { hex: '#EDD5A3', name: 'Sable Chaud' },
+            { hex: '#D4A5A5', name: 'Brique Rose' },
+            { hex: '#F5DEB3', name: 'Blé Doré' },
+            { hex: '#E8C99A', name: 'Caramel Léger' },
+            { hex: '#DEB887', name: 'Bois Clair' },
+        ],
+        autumn: [
+            { hex: '#C4A882', name: 'Camel Loro Piana' },
+            { hex: '#8B7355', name: 'Noisette Max Mara' },
+            { hex: '#A8896C', name: 'Sable de Toscane' },
+            { hex: '#6B5344', name: 'Espresso Armani' },
+            { hex: '#D4C5B0', name: 'Lin Naturel' },
+            { hex: '#B8A99A', name: 'Pierre Douce' },
+            { hex: '#9E8777', name: 'Grès Pâle' },
+            { hex: '#E0D0BC', name: 'Laine Précieuse' },
+        ],
+        winter: [
+            { hex: '#F5F5F5', name: 'Blanc Optique' },
+            { hex: '#E8E0D8', name: 'Ivoire Hivernal' },
+            { hex: '#B8B8C8', name: 'Brume Grise' },
+            { hex: '#C0C0C0', name: 'Platine Brillant' },
+            { hex: '#DCDCDC', name: 'Gris Perle' },
+            { hex: '#D8D8E8', name: 'Givre Lilas' },
+            { hex: '#A0A0B8', name: 'Acier Doux' },
+            { hex: '#E8E8E8', name: 'Blanc Nordique' },
+        ],
+    },
+};
+
+// Ключевые слова для запроса конкретного цвета
+// Нормализуем ё→е чтобы не терять совпадения
+const COLOR_KEYWORDS = {
+    green:   ['зелен', 'оливков', 'мятн', 'шалфей', 'изумруд', 'малахит', 'хаки', 'травяной', 'sage', 'green', 'olive', 'mint', 'emerald'],
+    blue:    ['синий', 'голубой', 'лазурн', 'небесн', 'кобальт', 'сапфир', 'индиго', 'джинсов', 'морск', 'navy', 'blue', 'cobalt', 'sapphire'],
+    pink:    ['розов', 'пудров', 'розовый', 'малинов', 'pink', 'blush', 'rose'],
+    red:     ['красн', 'алый', 'бордо', 'бургунд', 'вишнев', 'винный', 'red', 'crimson', 'burgundy', 'wine'],
+    orange:  ['оранжев', 'тыквен', 'коралл', 'абрикос', 'терракот', 'рыжий', 'медный', 'orange', 'coral', 'terracotta'],
+    purple:  ['фиолет', 'сиренев', 'лавандов', 'аметист', 'слив', 'пурпурн', 'purple', 'violet', 'lavender', 'amethyst'],
+    yellow:  ['желт', 'золот', 'лимонн', 'горчич', 'солнечн', 'медов', 'yellow', 'gold', 'mustard', 'amber'],
+    neutral: ['бежев', 'кремов', 'молочн', 'нейтральн', 'натуральн', 'nude', 'beige', 'camel', 'ivory'],
+};
+
+const COLOR_LABELS = {
+    green:   'Оттенки зелёного',
+    blue:    'Оттенки синего',
+    pink:    'Оттенки розового',
+    red:     'Оттенки красного',
+    orange:  'Оттенки оранжевого',
+    purple:  'Оттенки фиолетового',
+    yellow:  'Оттенки жёлтого и золотого',
+    neutral: 'Нейтральные оттенки',
+};
+
+function normalizeText(str) {
+    // Приводим ё→е и убираем лишние символы для надёжного поиска
+    return str.toLowerCase()
+        .replace(/ё/g, 'е')
+        .replace(/й/g, 'и');
+}
+
+function detectColorRequest(keyword) {
+    if (!keyword) return null;
+    const norm = normalizeText(keyword);
+    for (const [color, words] of Object.entries(COLOR_KEYWORDS)) {
+        for (const w of words) {
+            if (norm.includes(normalizeText(w))) return color;
+        }
+    }
+    return null;
+}
+
+// ════════════════════════════════════════════════
+
+let currentSeason = 'spring';
+let currentColors = [];
+
+function getContrastColor(hex) {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    return (0.299*r + 0.587*g + 0.114*b)/255 > 0.55 ? '#1A1A1A' : '#FFFFFF';
+}
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length-1; i > 0; i--) {
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+}
+
+function detectMood(kw) {
+    if (!kw) return { key:'neutral', label:'Классическая палитра' };
+    const low = kw.toLowerCase();
+    for (const [key,data] of Object.entries(MOOD_KEYWORDS))
+        for (const w of data.words)
+            if (low.includes(w)) return { key, label: data.label };
+    return { key:'neutral', label:'Авторская интерпретация' };
+}
+
+// ════════════════════════════════════════════════
+//  UI
+// ════════════════════════════════════════════════
+
+function selectSeason(btn) {
+    document.querySelectorAll('.season-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSeason = btn.dataset.season;
+    applyTheme(currentSeason);
+}
+
+function setMood(mood) {
+    document.getElementById('moodInput').value = mood;
+    document.getElementById('moodInput').focus();
+    document.querySelectorAll('.hint-tag').forEach(t => {
+        t.classList.toggle('active', t.textContent.trim() === mood);
+    });
+    document.querySelector('.hint-tag-custom').style.background = '';
+    document.querySelector('.hint-tag-custom').style.color = '';
+}
+
+function activateCustomMood() {
+    const input = document.getElementById('moodInput');
+    input.value = '';
+    input.placeholder = 'Напишите своё слово или образ...';
+    input.focus();
+    document.querySelectorAll('.hint-tag').forEach(t => t.classList.remove('active'));
+    const btn = document.querySelector('.hint-tag-custom');
+    btn.style.background = 'var(--accent)';
+    btn.style.color = 'white';
+    input.addEventListener('input', function reset() {
+        btn.style.background = '';
+        btn.style.color = '';
+        input.removeEventListener('input', reset);
+    });
+}
+
+function generatePalette() {
+    const moodText = document.getElementById('moodInput').value.trim();
+
+    // 1️⃣ Сначала проверяем: просит ли пользователь конкретный цвет?
+    const colorRequest = detectColorRequest(moodText);
+
+    let selected, feedbackText, paletteName;
+
+    if (colorRequest && COLOR_PALETTES[colorRequest]) {
+        // Берём палитру нужного цвета, учитываем сезон
+        const pool = COLOR_PALETTES[colorRequest][currentSeason];
+        selected    = shuffle(pool).slice(0, 6);
+        feedbackText = `${COLOR_LABELS[colorRequest]} · ${SEASON_LABELS[currentSeason]}`;
+        paletteName  = COLOR_LABELS[colorRequest];
+    } else {
+        // 2️⃣ Иначе — старая логика настроения
+        const mood   = detectMood(moodText);
+        const key    = SEASON_MOOD_MAP[currentSeason][mood.key];
+        selected     = shuffle(PALETTES[currentSeason][key]).slice(0, 6);
+        feedbackText = moodText ? `${mood.label} · «${moodText}»` : 'Классическая сезонная палитра';
+        paletteName  = PALETTE_NAMES[currentSeason][Math.floor(Math.random() * 5)];
+    }
+
+    currentColors = selected;
+
+    document.getElementById('moodDetected').textContent  = feedbackText;
+    document.getElementById('paletteName').textContent   = paletteName;
+    document.getElementById('paletteSeason').textContent = SEASON_LABELS[currentSeason];
+    document.getElementById('paletteMood').textContent   = moodText || 'Signature';
+
+    renderColorGrid(selected);
+
+    const result = document.getElementById('paletteResult');
+    result.classList.add('visible');
+    setTimeout(() => result.scrollIntoView({ behavior:'smooth', block:'start' }), 60);
+}
+
+function renderColorGrid(colors) {
+    const grid = document.getElementById('colorGrid');
+    grid.innerHTML = '';
+    colors.forEach((color, i) => {
+        const uid      = color.hex.replace('#','');
+        const textColor = getContrastColor(color.hex);
+        const card = document.createElement('div');
+        card.className = 'color-card';
+        card.style.animationDelay = `${i * 80}ms`;
+        card.innerHTML = `
+            <div class="color-swatch" style="background:${color.hex}">
+                <div class="swatch-label" style="color:${textColor}">${color.name}</div>
+            </div>
+            <div class="color-hex-row">
+                <span class="color-hex-val">${color.hex}</span>
+                <svg class="copy-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+                    <rect x="5" y="5" width="9" height="9" rx="1"/><path d="M11 5V3a1 1 0 00-1-1H3a1 1 0 00-1 1v7a1 1 0 001 1h2"/>
+                </svg>
+            </div>
+            <div class="copied-flash" id="flash-${uid}"><span>Скопировано</span></div>
+        `;
+        card.addEventListener('click', () => copyColor(color.hex, uid));
+        grid.appendChild(card);
+    });
+}
+
+function copyColor(hex, uid) {
+    navigator.clipboard.writeText(hex).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = hex;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+    });
+    const flash = document.getElementById('flash-' + uid);
+    if (flash) {
+        flash.classList.add('show');
+        setTimeout(() => flash.classList.remove('show'), 1200);
+    }
+}
+
+// ════════════════════════════════════════════════
+//  ЛОКАЛЬНОЕ ХРАНИЛИЩЕ
+// ════════════════════════════════════════════════
+
+const STORAGE_KEY = 'palette_atelier_saved';
+
+function getSaved() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+}
+
+function savePalette() {
+    const btn  = document.getElementById('saveBtn');
+    const name = document.getElementById('paletteName').textContent;
+    if (!name || currentColors.length === 0) return;
+
+    const saved     = getSaved();
+    const signature = currentColors.map(c => c.hex).join(',');
+    if (saved.some(p => p.signature === signature)) {
+        flashBtn(btn, '✓ Уже сохранено'); return;
+    }
+
+    saved.unshift({
+        id: Date.now(), name,
+        season: currentSeason,
+        moodText: document.getElementById('paletteMood').textContent,
+        colors: currentColors, signature,
+        savedAt: new Date().toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' }),
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+    flashBtn(btn, '♥ Сохранено');
+    renderSavedPalettes();
+}
+
+function flashBtn(btn, text) {
+    btn.textContent = text;
+    btn.classList.add('saved');
+    setTimeout(() => { btn.innerHTML = '♥ &nbsp;Сохранить'; btn.classList.remove('saved'); }, 2000);
+}
+
+function deletePalette(id) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(getSaved().filter(p => p.id !== id)));
+    renderSavedPalettes();
+}
+
+function restorePalette(id) {
+    const p = getSaved().find(e => e.id === id);
+    if (!p) return;
+    currentColors = p.colors;
+    currentSeason = p.season;
+    document.querySelectorAll('.season-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.season === p.season));
+    applyTheme(p.season);
+    document.getElementById('paletteName').textContent   = p.name;
+    document.getElementById('paletteSeason').textContent = SEASON_LABELS[p.season];
+    document.getElementById('paletteMood').textContent   = p.moodText || 'Signature';
+    document.getElementById('moodDetected').textContent  = 'Восстановлено · ' + p.savedAt;
+    renderColorGrid(p.colors);
+    const result = document.getElementById('paletteResult');
+    result.classList.add('visible');
+    result.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function renderSavedPalettes() {
+    const saved   = getSaved();
+    const section = document.getElementById('savedSection');
+    if (saved.length === 0) { section.classList.remove('visible'); return; }
+
+    section.classList.add('visible');
+    const n = saved.length;
+    document.getElementById('savedCount').textContent =
+        `${n} ${n%10===1&&n%100!==11?'палитра':[2,3,4].includes(n%10)&&![12,13,14].includes(n%100)?'палитры':'палитр'}`;
+
+    const grid = document.getElementById('savedGrid');
+    grid.innerHTML = '';
+    saved.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'saved-card';
+        card.innerHTML = `
+            <div class="saved-swatches">
+                ${p.colors.map(c=>`<div class="saved-swatch" style="background:${c.hex}" title="${c.name}"></div>`).join('')}
+            </div>
+            <div class="saved-info">
+                <div class="saved-name">${p.name}</div>
+                <div class="saved-meta">${SEASON_LABELS[p.season]} · ${p.savedAt}</div>
+            </div>
+            <div class="saved-actions">
+                <button class="saved-action" onclick="restorePalette(${p.id})">Открыть</button>
+                <button class="saved-action delete" onclick="deletePalette(${p.id})">Удалить</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// ════════════════════════════════════════════════
+//  СКАЧАТЬ PNG
+// ════════════════════════════════════════════════
+
+function downloadPalette() {
+    const canvas = document.createElement('canvas');
+    const W = 1800, SH = 320, IH = 120, HDR = 80;
+    canvas.width = W; canvas.height = SH + IH + HDR;
+    const ctx = canvas.getContext('2d');
+    const cw  = W / currentColors.length;
+
+    ctx.fillStyle = '#FAFAF8';
+    ctx.fillRect(0, 0, W, canvas.height);
+
+    currentColors.forEach((c,i) => {
+        ctx.fillStyle = c.hex;
+        ctx.fillRect(i*cw, 0, cw, SH);
+    });
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, SH, W, IH);
+
+    currentColors.forEach((c,i) => {
+        const tc = (0.299*parseInt(c.hex.slice(1,3),16)+0.587*parseInt(c.hex.slice(3,5),16)+0.114*parseInt(c.hex.slice(5,7),16))/255>0.55?'#1A1A1A':'#FFFFFF';
+        ctx.fillStyle = tc;
+        ctx.font = 'italic 18px Georgia, serif';
+        ctx.fillText(c.name, i*cw+18, SH-24);
+        ctx.fillStyle = '#A89890';
+        ctx.font = '13px Arial, sans-serif';
+        ctx.fillText(c.hex, i*cw+18, SH+44);
+    });
+
+    ctx.fillStyle = '#F5F2EE';
+    ctx.fillRect(0, SH+IH, W, HDR);
+    ctx.fillStyle = '#1A1A1A';
+    ctx.font = 'italic 24px Georgia, serif';
+    ctx.fillText('Palette Atelier  ·  ' + (document.getElementById('paletteName').textContent || ''), 24, SH+IH+46);
+    ctx.fillStyle = '#A89890';
+    ctx.font = '13px Arial, sans-serif';
+    ctx.fillText(SEASON_LABELS[currentSeason] + '  ·  2026', 24, SH+IH+68);
+
+    canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a   = document.createElement('a');
+        a.href = url;
+        a.download = 'palette-atelier.png';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+}
+
+// ════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+    applyTheme('spring');
+    renderSavedPalettes();
+});
+</script>
+</body>
+</html>
