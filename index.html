@@ -765,7 +765,221 @@
             .saved-actions { border-left: none; border-top: 1px solid var(--line); }
             .hero-watermark { font-size: 80px; opacity: 0.5; }
             footer { flex-direction: column; gap: 12px; text-align: center; }
+            /* Шаг 10: уменьшить свотч на мобильном */
+            .color-swatch { height: 160px; }
+            .palette-actions { flex-direction: column; }
+            .action-btn-secondary, .action-btn-tertiary { text-align: center; }
         }
+
+        /* ══ ШАГ 1: подсветка результата при появлении ══ */
+        @keyframes resultHeaderGlow {
+            0%   { border-bottom-color: var(--line); }
+            25%  { border-bottom-color: var(--accent); }
+            100% { border-bottom-color: var(--line); }
+        }
+        .palette-result.just-generated .palette-header {
+            animation: resultHeaderGlow 1.4s ease both;
+        }
+
+        /* ══ ШАГ 3: подсказка валидации ══ */
+        .validation-hint {
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: var(--accent);
+            margin-top: -72px;
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+        .validation-hint.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ══ ШАГ 4: кнопка своего ввода ══ */
+        .custom-mood-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .custom-mood-hint {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 13px;
+            font-style: italic;
+            color: var(--muted);
+        }
+
+        /* ══ ШАГ 5: иерархия кнопок действий ══ */
+        .palette-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .action-btn-primary {
+            padding: 18px 40px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.25s, color 0.7s;
+            flex-shrink: 0;
+        }
+        .action-btn-primary:hover { background: var(--text); }
+        .action-btn-primary.saved { background: #4A7856; }
+        .action-btn-secondary {
+            padding: 18px 24px;
+            background: transparent;
+            border: 1px solid var(--line-soft);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            color: var(--text-soft);
+            transition: background 0.2s, border-color 0.2s, color 0.7s;
+        }
+        .action-btn-secondary:hover { background: var(--text); color: white; border-color: var(--text); }
+        .action-btn-tertiary {
+            padding: 18px 20px;
+            background: transparent;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            color: var(--muted);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.2s;
+            margin-left: auto;
+        }
+        .action-btn-tertiary:hover { color: var(--text); }
+
+        /* ══ ШАГ 7: раскрытие сохранённой палитры ══ */
+        .saved-card-expanded {
+            display: none;
+            grid-column: 1 / -1;
+            padding: 20px 24px;
+            background: #FAFAF8;
+            border-top: 1px solid var(--line);
+        }
+        .saved-card.open .saved-card-expanded { display: flex; gap: 6px; flex-wrap: wrap; }
+        .saved-hex-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid var(--line);
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .saved-hex-chip:hover { border-color: var(--accent); }
+        .saved-hex-dot {
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .saved-hex-text {
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--muted);
+        }
+        .saved-hex-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 13px;
+            font-style: italic;
+            color: var(--text);
+            margin-right: 4px;
+        }
+        .saved-expand-btn {
+            padding: 0 20px;
+            background: transparent;
+            border: none;
+            border-left: 1px solid var(--line);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            color: var(--muted);
+            transition: background 0.2s, color 0.2s;
+        }
+        .saved-expand-btn:hover { background: rgba(0,0,0,0.04); }
+        .saved-card { cursor: default; }
+        .saved-card .saved-swatches { cursor: pointer; }
+
+        /* ══ ШАГ 8: пустое состояние ══ */
+        .palette-placeholder {
+            padding: 60px 0 40px;
+            text-align: center;
+            border-top: 1px solid var(--line);
+        }
+        .placeholder-swatches {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            margin-bottom: 28px;
+        }
+        .placeholder-swatch {
+            height: 80px;
+            width: 60px;
+            opacity: 0.35;
+            transition: opacity 0.5s;
+        }
+        .palette-placeholder:hover .placeholder-swatch { opacity: 0.6; }
+        .placeholder-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-style: italic;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .placeholder-sub {
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--line-soft);
+        }
+
+        /* ══ ШАГ 9: плавающая кнопка навигации ══ */
+        .fab-top {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 22px;
+            background: var(--text);
+            color: white;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.3s, transform 0.3s, background 0.2s;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .fab-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .fab-top:hover { background: var(--accent); }
+        .fab-top svg { width: 12px; height: 12px; }
     </style>
 </head>
 <body>
@@ -794,6 +1008,14 @@
         <span class="hero-cta-arrow"></span>
     </button>
 </section>
+
+<!-- ══ ПЛАВАЮЩАЯ КНОПКА (шаг 9) ══ -->
+<button class="fab-top" id="fabTop" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 10V2M2 6l4-4 4 4"/>
+    </svg>
+    Новая палитра
+</button>
 
 <!-- ══ GENERATOR ══ -->
 <main id="generator">
@@ -905,8 +1127,11 @@
             <span class="hint-tag" onclick="setMood('золото и слоновая кость')">золото и слоновая кость</span>
             <span class="hint-tag" onclick="setMood('тёмный сапфир')">тёмный сапфир</span>
 
-            <span class="mood-category">Ваш вариант</span>
-            <button class="hint-tag-custom" onclick="activateCustomMood()">✦ &nbsp;Ваш выбор</button>
+            <span class="mood-category">Свой вариант</span>
+            <div class="custom-mood-wrap">
+                <button class="hint-tag-custom" onclick="activateCustomMood()">✦ &nbsp;Ввести своё</button>
+                <span class="custom-mood-hint">— напишите любое слово или образ в поле выше</span>
+            </div>
 
         </div>
     </section>
@@ -916,6 +1141,21 @@
         <button class="generate-btn" onclick="generatePalette()">
             <span>Создать палитру</span>
         </button>
+        <div class="validation-hint" id="validationHint"></div>
+    </div>
+
+    <!-- Пустое состояние (шаг 8) -->
+    <div class="palette-placeholder" id="palettePlaceholder">
+        <div class="placeholder-swatches">
+            <div class="placeholder-swatch" style="background:#F7CAC9"></div>
+            <div class="placeholder-swatch" style="background:#A8D5E2"></div>
+            <div class="placeholder-swatch" style="background:#C5D5A8"></div>
+            <div class="placeholder-swatch" style="background:#DDA8C0"></div>
+            <div class="placeholder-swatch" style="background:#D8C8E8"></div>
+            <div class="placeholder-swatch" style="background:#F5D0B0"></div>
+        </div>
+        <div class="placeholder-text">Ваша палитра появится здесь</div>
+        <div class="placeholder-sub">Выберите сезон · опишите настроение · нажмите создать</div>
     </div>
 
     <!-- Результат -->
@@ -934,9 +1174,9 @@
         <div class="color-grid" id="colorGrid"></div>
 
         <div class="palette-actions">
-            <button class="action-btn" onclick="generatePalette()">↻ &nbsp;Обновить</button>
-            <button class="action-btn save-btn" id="saveBtn" onclick="savePalette()">♥ &nbsp;Сохранить</button>
-            <button class="action-btn" onclick="downloadPalette()">↓ &nbsp;Скачать PNG</button>
+            <button class="action-btn-primary" id="saveBtn" onclick="savePalette()">♥ &nbsp;Сохранить палитру</button>
+            <button class="action-btn-secondary" onclick="generatePalette()">↻ &nbsp;Обновить</button>
+            <button class="action-btn-tertiary" onclick="downloadPalette()">↓ Скачать PNG</button>
         </div>
 
     </div>
@@ -1645,11 +1885,13 @@ function selectSeason(btn) {
 function setMood(mood) {
     document.getElementById('moodInput').value = mood;
     document.getElementById('moodInput').focus();
+    // Шаг 2: чёткое активное состояние тега
     document.querySelectorAll('.hint-tag').forEach(t => {
         t.classList.toggle('active', t.textContent.trim() === mood);
     });
     document.querySelector('.hint-tag-custom').style.background = '';
     document.querySelector('.hint-tag-custom').style.color = '';
+    hideValidationHint();
 }
 
 function activateCustomMood() {
@@ -1658,6 +1900,7 @@ function activateCustomMood() {
     input.placeholder = 'Напишите своё слово или образ...';
     input.focus();
     document.querySelectorAll('.hint-tag').forEach(t => t.classList.remove('active'));
+    // Шаг 4: чёткая обратная связь
     const btn = document.querySelector('.hint-tag-custom');
     btn.style.background = 'var(--accent)';
     btn.style.color = 'white';
@@ -1668,8 +1911,24 @@ function activateCustomMood() {
     });
 }
 
+// Шаг 3: валидация
+function showValidationHint(msg) {
+    const el = document.getElementById('validationHint');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3000);
+}
+function hideValidationHint() {
+    document.getElementById('validationHint').classList.remove('show');
+}
+
 function generatePalette() {
     const moodText = document.getElementById('moodInput').value.trim();
+
+    // Шаг 3: мягкая валидация
+    if (!moodText) {
+        showValidationHint('Попробуйте выбрать настроение или написать своё слово...');
+    }
 
     // 1️⃣ Сначала проверяем: просит ли пользователь конкретный цвет?
     const colorRequest = detectColorRequest(moodText);
@@ -1700,9 +1959,18 @@ function generatePalette() {
 
     renderColorGrid(selected);
 
+    // Шаг 8: скрыть заглушку
+    document.getElementById('palettePlaceholder').style.display = 'none';
+
     const result = document.getElementById('paletteResult');
     result.classList.add('visible');
-    setTimeout(() => result.scrollIntoView({ behavior:'smooth', block:'start' }), 60);
+
+    // Шаг 1: подсветка + прокрутка
+    result.classList.remove('just-generated');
+    void result.offsetWidth; // reflow для перезапуска анимации
+    result.classList.add('just-generated');
+    setTimeout(() => result.scrollIntoView({ behavior:'smooth', block:'start' }), 150);
+    hideValidationHint();
 }
 
 function renderColorGrid(colors) {
@@ -1784,7 +2052,7 @@ function savePalette() {
 function flashBtn(btn, text) {
     btn.textContent = text;
     btn.classList.add('saved');
-    setTimeout(() => { btn.innerHTML = '♥ &nbsp;Сохранить'; btn.classList.remove('saved'); }, 2000);
+    setTimeout(() => { btn.innerHTML = '♥ &nbsp;Сохранить палитру'; btn.classList.remove('saved'); }, 2000);
 }
 
 function deletePalette(id) {
@@ -1825,8 +2093,16 @@ function renderSavedPalettes() {
     saved.forEach(p => {
         const card = document.createElement('div');
         card.className = 'saved-card';
+        // Шаг 6 + 7: HEX-чипы + раскрытие
+        const hexChips = p.colors.map(c => `
+            <div class="saved-hex-chip" onclick="copyColor('${c.hex}','saved-${c.hex.replace('#','')}${p.id}')" title="Скопировать ${c.hex}">
+                <div class="saved-hex-dot" style="background:${c.hex}"></div>
+                <span class="saved-hex-name">${c.name}</span>
+                <span class="saved-hex-text">${c.hex}</span>
+            </div>
+        `).join('');
         card.innerHTML = `
-            <div class="saved-swatches">
+            <div class="saved-swatches" onclick="toggleSavedCard(this.closest('.saved-card'))">
                 ${p.colors.map(c=>`<div class="saved-swatch" style="background:${c.hex}" title="${c.name}"></div>`).join('')}
             </div>
             <div class="saved-info">
@@ -1834,9 +2110,11 @@ function renderSavedPalettes() {
                 <div class="saved-meta">${SEASON_LABELS[p.season]} · ${p.savedAt}</div>
             </div>
             <div class="saved-actions">
+                <button class="saved-expand-btn" onclick="toggleSavedCard(this.closest('.saved-card'))">▾ HEX</button>
                 <button class="saved-action" onclick="restorePalette(${p.id})">Открыть</button>
                 <button class="saved-action delete" onclick="deletePalette(${p.id})">Удалить</button>
             </div>
+            <div class="saved-card-expanded">${hexChips}</div>
         `;
         grid.appendChild(card);
     });
@@ -1893,12 +2171,35 @@ function downloadPalette() {
     });
 }
 
+// Шаг 7: переключение раскрытия карточки
+function toggleSavedCard(card) {
+    card.classList.toggle('open');
+    const btn = card.querySelector('.saved-expand-btn');
+    if (btn) btn.textContent = card.classList.contains('open') ? '▴ HEX' : '▾ HEX';
+}
+
 // ════════════════════════════════════════════════
 //  INIT
 // ════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
     applyTheme('spring');
     renderSavedPalettes();
+
+    // Шаг 2: снимаем активный тег при ручном вводе
+    const input = document.getElementById('moodInput');
+    input.addEventListener('input', () => {
+        const val = input.value.trim();
+        document.querySelectorAll('.hint-tag').forEach(t => {
+            t.classList.toggle('active', t.textContent.trim() === val);
+        });
+    });
+
+    // Шаг 9: показываем FAB после прокрутки за Hero
+    const fab = document.getElementById('fabTop');
+    window.addEventListener('scroll', () => {
+        const heroH = document.getElementById('hero').offsetHeight;
+        fab.classList.toggle('visible', window.scrollY > heroH * 0.7);
+    }, { passive: true });
 });
 </script>
 </body>
