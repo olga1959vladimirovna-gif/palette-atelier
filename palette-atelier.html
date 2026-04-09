@@ -5113,10 +5113,11 @@ function buildShareURL() {
     if (!currentColors || currentColors.length === 0) return '';
     const base = window.location.origin + window.location.pathname;
     const params = new URLSearchParams();
+    // НЕ применяем encodeURIComponent — URLSearchParams кодирует сам
     params.set('hexes',  currentColors.map(c => c.hex.replace('#','')).join(','));
-    params.set('names',  currentColors.map(c => encodeURIComponent(c.name)).join(','));
+    params.set('names',  currentColors.map(c => c.name).join('|'));
     params.set('season', currentSeason);
-    params.set('pname',  encodeURIComponent(document.getElementById('paletteName')?.textContent || ''));
+    params.set('pname',  document.getElementById('paletteName')?.textContent || '');
     return base + '?' + params.toString();
 }
 
@@ -5126,19 +5127,21 @@ function toggleSharePopover(e) {
 
     const popover = document.getElementById('sharePopover');
     const isOpen  = popover.classList.contains('open');
-
-    // Закрыть все открытые поповеры
     document.querySelectorAll('.share-popover.open').forEach(p => p.classList.remove('open'));
     if (isOpen) return;
 
-    const url = buildShareURL();
+    const url     = buildShareURL();
+    const palName = document.getElementById('paletteName')?.textContent || 'палитру';
+    const shareText = `Смотри, какую палитру «${palName}» я создала в Palette Atelier 🎨`;
+
     document.getElementById('shareLinkInput').value = url;
 
-    const encoded = encodeURIComponent(url);
-    const text    = encodeURIComponent('Смотри, какую палитру я создала в Palette Atelier 🎨');
-    document.getElementById('shareTelegram').href = `https://t.me/share/url?url=${encoded}&text=${text}`;
-    document.getElementById('shareWhatsapp').href = `https://wa.me/?text=${text}%20${encoded}`;
-    document.getElementById('shareVk').href       = `https://vk.com/share.php?url=${encoded}&title=${text}`;
+    // Кнопки соцсетей — кодируем url и текст только один раз
+    const eu = encodeURIComponent(url);
+    const et = encodeURIComponent(shareText);
+    document.getElementById('shareTelegram').href = `https://t.me/share/url?url=${eu}&text=${et}`;
+    document.getElementById('shareWhatsapp').href = `https://api.whatsapp.com/send?text=${et}%0A${eu}`;
+    document.getElementById('shareVk').href       = `https://vk.com/share.php?url=${eu}`;
 
     popover.classList.add('open');
 }
@@ -5173,7 +5176,7 @@ function restorePaletteFromURL() {
     if (!hexes) return;
 
     const hexArr  = hexes.split(',');
-    const nameArr = names ? names.split(',').map(n => decodeURIComponent(n)) : hexArr.map(() => '');
+    const nameArr = names ? names.split('|') : hexArr.map(() => '');
     if (hexArr.length < 1) return;
 
     // Восстанавливаем палитру
@@ -5189,7 +5192,7 @@ function restorePaletteFromURL() {
 
     // Устанавливаем currentColors и рендерим всё
     currentColors = colors;
-    const palName = pname ? decodeURIComponent(pname) : 'Shared Palette';
+    const palName = pname || 'Shared Palette';
 
     document.getElementById('paletteName').textContent   = palName;
     document.getElementById('paletteSeason').textContent = {'spring':'Весна','summer':'Лето','autumn':'Осень','winter':'Зима'}[validSeason];
