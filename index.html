@@ -1289,6 +1289,203 @@
         }
         .explore-btn:hover { background: var(--accent); color: white; }
 
+        /* ══════════════════════════════
+           КОЛЛАЖ МАТЕРИАЛОВ
+        ══════════════════════════════ */
+        .fabric-section {
+            display: none;
+            margin-top: 80px;
+            padding-top: 48px;
+            border-top: 2px solid var(--accent);
+            transition: border-color 0.7s;
+        }
+        .fabric-section.visible { display: block; animation: revealUp 0.5s ease both; }
+
+        .fabric-section-label {
+            font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 6px; transition: color 0.7s;
+        }
+        .fabric-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px; font-style: italic; font-weight: 400;
+            color: var(--text); margin-bottom: 8px;
+        }
+        .fabric-section-sub {
+            font-size: 11px; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 36px;
+        }
+
+        /* Пропорциональная полоса */
+        .fabric-strip-wrap { margin-bottom: 12px; }
+        .fabric-strip {
+            display: flex; height: 96px; overflow: hidden;
+            border: 1px solid var(--line);
+        }
+        .fabric-strip-segment {
+            position: relative; overflow: hidden; transition: flex 0.5s ease;
+            cursor: default; flex-shrink: 0;
+        }
+        .fabric-strip-segment:hover { filter: brightness(0.92); }
+        .fabric-strip-seg-label {
+            position: absolute; bottom: 10px; left: 10px;
+            font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+            white-space: nowrap; overflow: hidden; max-width: calc(100% - 16px);
+        }
+        .fabric-strip-seg-pct {
+            position: absolute; top: 10px; right: 10px;
+            font-size: 10px; letter-spacing: 1px; font-weight: 500;
+        }
+        /* Шиммер-блик на полосе */
+        .fabric-strip-segment::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .fabric-strip-hint {
+            font-size: 9px; letter-spacing: 1.5px; color: var(--muted);
+            margin-top: 8px; margin-bottom: 40px;
+        }
+
+        /* Карточки-образцы */
+        .fabric-swatches {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+        .fabric-card {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        .fabric-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+            z-index: 2;
+        }
+
+        /* Булавка */
+        .fabric-pin {
+            width: 14px; height: 14px; border-radius: 50%;
+            background: var(--accent);
+            margin: 0 auto 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.22);
+            transition: background 0.7s;
+            position: relative;
+        }
+        .fabric-pin::after {
+            content: '';
+            position: absolute;
+            top: 12px; left: 6px;
+            width: 2px; height: 10px;
+            background: rgba(0,0,0,0.15);
+        }
+
+        /* Цветной прямоугольник образца */
+        .fabric-swatch-color {
+            height: 150px; width: 100%;
+            position: relative; overflow: hidden;
+        }
+        .fabric-texture-overlay {
+            position: absolute; inset: 0; pointer-events: none;
+        }
+        /* Текстуры тканей */
+        [data-tex="linen"] .fabric-texture-overlay {
+            background:
+                repeating-linear-gradient(0deg,   rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 5px),
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 5px);
+        }
+        [data-tex="silk"] .fabric-texture-overlay {
+            background: repeating-linear-gradient(
+                135deg,
+                rgba(255,255,255,0.14) 0px, rgba(255,255,255,0.14) 1px,
+                transparent 1px, transparent 10px
+            );
+        }
+        [data-tex="velvet"] .fabric-texture-overlay {
+            background: radial-gradient(circle, rgba(0,0,0,0.10) 1px, transparent 1px);
+            background-size: 6px 6px;
+        }
+        [data-tex="wool"] .fabric-texture-overlay {
+            background:
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 1px, transparent 1px, transparent 4px),
+                repeating-linear-gradient(0deg,   rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 8px);
+        }
+        [data-tex="leather"] .fabric-texture-overlay {
+            background:
+                repeating-linear-gradient(45deg,  rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 9px),
+                repeating-linear-gradient(-45deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 9px);
+        }
+        [data-tex="denim"] .fabric-texture-overlay {
+            background:
+                repeating-linear-gradient(55deg,  rgba(0,0,0,0.07) 0px, rgba(0,0,0,0.07) 1px, transparent 1px, transparent 6px),
+                repeating-linear-gradient(-55deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px);
+        }
+        /* Общий блик поверх текстуры */
+        .fabric-swatch-color::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, transparent 55%);
+            pointer-events: none;
+        }
+        .fabric-swatch-name {
+            position: absolute; bottom: 8px; left: 10px; right: 6px;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic; font-size: 12px;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            opacity: 0.85; pointer-events: none;
+        }
+
+        /* Нижняя часть карточки */
+        .fabric-info {
+            padding: 12px 10px 14px;
+            background: white;
+            border: 1px solid var(--line);
+            border-top: none;
+        }
+        .fabric-pct-tag {
+            font-size: 9px; letter-spacing: 2px;
+            color: var(--accent); font-weight: 500;
+            margin-bottom: 4px; transition: color 0.7s;
+        }
+        .fabric-material-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 17px; font-style: italic;
+            color: var(--text); margin-bottom: 2px;
+            line-height: 1.2;
+        }
+        .fabric-material-sub {
+            font-size: 8px; letter-spacing: 1px;
+            color: var(--muted); text-transform: uppercase;
+            margin-bottom: 8px; line-height: 1.4;
+        }
+        .fabric-hex-row {
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .fabric-hex-val {
+            font-size: 9px; letter-spacing: 1.5px; color: var(--muted);
+        }
+        .fabric-copy-hint {
+            font-size: 8px; color: var(--accent); opacity: 0;
+            transition: opacity 0.2s; letter-spacing: 1px;
+        }
+        .fabric-card:hover .fabric-copy-hint { opacity: 1; }
+
+        .fabric-flash {
+            position: absolute; inset: 0;
+            background: rgba(var(--accent-rgb), 0.82);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s;
+            font-size: 9px; letter-spacing: 3px; color: white; text-transform: uppercase;
+        }
+        .fabric-flash.show { opacity: 1; }
+
+        @media (max-width: 768px) {
+            .fabric-swatches { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+            .fabric-swatch-color { height: 110px; }
+            .fabric-strip { height: 72px; }
+        }
+
         @media (max-width: 768px) {
             .explorer-chips { grid-template-columns: repeat(3,1fr); }
             .explorer-chip-swatch { height: 80px; }
@@ -1687,6 +1884,20 @@
                 <!-- Легенда рендерится через JS -->
             </div>
         </div>
+    </div>
+
+    <!-- Коллаж материалов -->
+    <div class="fabric-section" id="fabricSection">
+        <div class="fabric-section-label">Коллаж материалов</div>
+        <div class="fabric-section-title">Палитра в тканях</div>
+        <div class="fabric-section-sub">Пропорции 60 · 20 · 10 · 5 · 3 · 2% — как у профессиональных дизайнеров</div>
+
+        <div class="fabric-strip-wrap">
+            <div class="fabric-strip" id="fabricStrip"></div>
+            <div class="fabric-strip-hint">← Пропорциональное распределение цветов в образе или интерьере</div>
+        </div>
+
+        <div class="fabric-swatches" id="fabricSwatches"></div>
     </div>
 
     <!-- Color Explorer -->
@@ -2509,6 +2720,7 @@ function generatePalette() {
     renderNeutralBase(currentSeason);
     renderUsageGuide(selected);
     showSceneSection(selected);
+    renderFabricCollage(selected);
 
     document.getElementById('palettePlaceholder').style.display = 'none';
 
@@ -3498,6 +3710,86 @@ function showSceneSection(colors) {
     const section = document.getElementById('sceneSection');
     section.classList.add('visible');
     renderScene(currentScene, colors);
+}
+
+// ══════════════════════════════════════════════════════════
+//  КОЛЛАЖ МАТЕРИАЛОВ
+// ══════════════════════════════════════════════════════════
+
+const FABRIC_PCTS  = ['60%', '20%', '10%', '5%', '3%', '2%'];
+const FABRIC_FLEX  = [60, 20, 10, 5, 3, 2];
+
+function getMaterial(hex) {
+    const {h, s, l} = hexToHSL(hex);
+    const temp = getTemperature(hex);
+    if (l > 83 && s < 18)                          return { name: 'Батист',   sub: 'Лёгкая деликатная ткань',       tex: 'silk'    };
+    if (l > 75 && s < 35)                          return { name: 'Лён',      sub: 'Натуральное волокно',            tex: 'linen'   };
+    if (l > 68 && temp === 'cool' && s >= 35)      return { name: 'Шифон',    sub: 'Воздушная прозрачная ткань',     tex: 'silk'    };
+    if (l > 63 && s >= 42)                         return { name: 'Органза',  sub: 'Полупрозрачная жёсткая ткань',  tex: 'silk'    };
+    if (l >= 45 && l <= 72 && temp === 'warm' && s > 45)
+                                                   return { name: 'Шёлк',     sub: 'Блестящая натуральная ткань',   tex: 'silk'    };
+    if (temp === 'cool' && s > 48)                 return { name: 'Атлас',    sub: 'Гладкая блестящая ткань',       tex: 'silk'    };
+    if (l >= 38 && temp === 'warm' && s > 22)      return { name: 'Твид',     sub: 'Плотная шерстяная ткань',       tex: 'wool'    };
+    if (l < 28 && s > 32)                          return { name: 'Бархат',   sub: 'Роскошная ворсистая ткань',     tex: 'velvet'  };
+    if (l < 38 && s <= 32)                         return { name: 'Замша',    sub: 'Матовая мягкая кожа',           tex: 'leather' };
+    if (l >= 28 && l < 48 && temp === 'neutral')   return { name: 'Деним',    sub: 'Плотное хлопковое полотно',     tex: 'denim'   };
+    if (s < 18)                                    return { name: 'Джерси',   sub: 'Эластичный трикотаж',           tex: 'wool'    };
+    return                                                { name: 'Хлопок',   sub: 'Универсальная натуральная ткань', tex: 'linen' };
+}
+
+function renderFabricCollage(colors) {
+    if (!colors || colors.length < 1) return;
+    const section = document.getElementById('fabricSection');
+    if (!section) return;
+    section.classList.add('visible');
+
+    // Пропорциональная полоса
+    const strip = document.getElementById('fabricStrip');
+    strip.innerHTML = colors.map((col, i) => {
+        const txtC = getContrastColor(col.hex);
+        return `<div class="fabric-strip-segment" style="flex:${FABRIC_FLEX[i]};background:${col.hex}">
+            <div class="fabric-strip-seg-pct" style="color:${txtC}">${FABRIC_PCTS[i]}</div>
+            <div class="fabric-strip-seg-label" style="color:${txtC}">${col.name}</div>
+        </div>`;
+    }).join('');
+
+    // Карточки-образцы
+    const swatches = document.getElementById('fabricSwatches');
+    swatches.innerHTML = colors.map((col, i) => {
+        const mat  = getMaterial(col.hex);
+        const txtC = getContrastColor(col.hex);
+        const uid  = 'fab-' + col.hex.replace('#','') + i;
+        return `
+        <div class="fabric-card" onclick="copyFabric('${col.hex}','${uid}')">
+            <div class="fabric-pin"></div>
+            <div class="fabric-swatch-color" data-tex="${mat.tex}" style="background:${col.hex}">
+                <div class="fabric-texture-overlay"></div>
+                <div class="fabric-swatch-name" style="color:${txtC}">${col.name}</div>
+            </div>
+            <div class="fabric-flash" id="${uid}"><span>Скопировано</span></div>
+            <div class="fabric-info">
+                <div class="fabric-pct-tag">${FABRIC_PCTS[i]}</div>
+                <div class="fabric-material-name">${mat.name}</div>
+                <div class="fabric-material-sub">${mat.sub}</div>
+                <div class="fabric-hex-row">
+                    <span class="fabric-hex-val">${col.hex}</span>
+                    <span class="fabric-copy-hint">копировать</span>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function copyFabric(hex, uid) {
+    navigator.clipboard.writeText(hex).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = hex; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    });
+    const flash = document.getElementById(uid);
+    if (!flash) return;
+    flash.classList.add('show');
+    setTimeout(() => flash.classList.remove('show'), 900);
 }
 </script>
 </body>
