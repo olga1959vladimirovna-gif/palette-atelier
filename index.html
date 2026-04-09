@@ -947,6 +947,100 @@
         }
         .action-btn-tertiary:hover { color: var(--text); }
 
+        /* ══ ЭКСПОРТ — МОДАЛЬНОЕ ОКНО ══ */
+        .export-modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .export-modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+        .export-modal {
+            background: white; width: 90vw; max-width: 680px;
+            max-height: 88vh; overflow-y: auto;
+            transform: translateY(20px); transition: transform 0.25s ease;
+        }
+        .export-modal-overlay.open .export-modal { transform: translateY(0); }
+
+        .export-modal-head {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 28px 32px 20px;
+            border-bottom: 1px solid var(--line);
+        }
+        .export-modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px; font-style: italic; color: var(--text);
+        }
+        .export-modal-close {
+            background: none; border: none; font-size: 20px;
+            cursor: pointer; color: var(--muted); line-height: 1;
+            padding: 4px 8px; transition: color 0.2s;
+        }
+        .export-modal-close:hover { color: var(--text); }
+
+        /* Табы форматов */
+        .export-tabs {
+            display: flex; border-bottom: 1px solid var(--line);
+        }
+        .export-tab {
+            padding: 14px 24px; background: none; border: none;
+            font-family: 'Montserrat', sans-serif; font-size: 9px;
+            letter-spacing: 2.5px; text-transform: uppercase;
+            cursor: pointer; color: var(--muted);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px; transition: all 0.2s;
+        }
+        .export-tab:hover { color: var(--text); }
+        .export-tab.active {
+            color: var(--accent); border-bottom-color: var(--accent);
+        }
+
+        /* Контент панелей */
+        .export-panel { display: none; padding: 24px 32px; }
+        .export-panel.active { display: block; }
+
+        .export-label {
+            font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--muted); margin-bottom: 10px;
+        }
+        .export-code {
+            font-family: 'Courier New', monospace; font-size: 12px;
+            line-height: 1.8; color: var(--text);
+            background: #F8F6F2; padding: 20px;
+            border: 1px solid var(--line);
+            white-space: pre; overflow-x: auto;
+            max-height: 320px; overflow-y: auto;
+            margin-bottom: 16px;
+        }
+        .export-code .tok-key  { color: #5A9A6A; }
+        .export-code .tok-val  { color: #C05A18; }
+        .export-code .tok-str  { color: #3858A0; }
+        .export-code .tok-num  { color: #8B4A8A; }
+        .export-code .tok-com  { color: #A89890; font-style: italic; }
+
+        .export-copy-btn {
+            padding: 12px 28px; background: var(--text); color: white;
+            border: none; font-family: 'Montserrat', sans-serif;
+            font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .export-copy-btn:hover { background: var(--accent); }
+        .export-copy-btn.copied { background: #4A7856; }
+
+        .export-format-desc {
+            font-size: 11px; color: var(--muted); line-height: 1.6;
+            margin-bottom: 18px; font-style: italic;
+            font-family: 'Cormorant Garamond', serif; font-size: 14px;
+        }
+
+        /* Превью цветов в модале */
+        .export-preview-strip {
+            display: flex; gap: 2px; margin-bottom: 20px; height: 12px;
+        }
+        .export-preview-seg { flex: 1; }
+
         /* ══ ТУЛТИПЫ (всплывающие подсказки) ══ */
         [data-tip] {
             position: relative;
@@ -2095,10 +2189,13 @@
                 data-tip="Скачать палитру как картинку PNG&#10;— удобно для презентаций&#10;и сохранения в галерею">↓ Скачать PNG</button>
         </div>
 
-        <!-- Скопировать все (Фаза 4.4) -->
-        <div class="copy-all-wrap">
+        <!-- Скопировать все + Экспорт -->
+        <div class="copy-all-wrap" style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
             <button class="copy-all-btn" onclick="copyAllColors()"
-                data-tip="Скопировать все 6 цветов палитры&#10;с их HEX-кодами и ролями&#10;(доминанта, поддержка, акцент)&#10;одним текстом — вставить куда угодно">◱ &nbsp;Скопировать все цвета и роли</button>
+                data-tip="Скопировать все 6 цветов палитры&#10;с их HEX-кодами и ролями&#10;одним текстом — вставить куда угодно">◱ &nbsp;Скопировать все цвета и роли</button>
+            <button class="copy-all-btn" onclick="openExportModal()"
+                style="background:var(--text);color:white;border-color:var(--text);"
+                data-tip="Экспорт палитры в форматах:&#10;CSS-переменные, Figma-токены,&#10;текстовый список">⬡ &nbsp;Экспорт для дизайнера</button>
         </div>
 
         <!-- Руководство по применению (Фаза 5) -->
@@ -2208,6 +2305,54 @@
     </div>
 
 </main>
+
+<!-- ══ МОДАЛЬНОЕ ОКНО ЭКСПОРТА ══ -->
+<div class="export-modal-overlay" id="exportModalOverlay" onclick="closeExportModal(event)">
+    <div class="export-modal" onclick="event.stopPropagation()">
+        <div class="export-modal-head">
+            <div class="export-modal-title">Экспорт палитры</div>
+            <button class="export-modal-close" onclick="closeExportModal()">&times;</button>
+        </div>
+        <div class="export-tabs">
+            <button class="export-tab active" onclick="switchExportTab('css')">CSS</button>
+            <button class="export-tab" onclick="switchExportTab('figma')">Figma / JSON</button>
+            <button class="export-tab" onclick="switchExportTab('text')">Текст</button>
+            <button class="export-tab" onclick="switchExportTab('scss')">SCSS</button>
+        </div>
+
+        <div class="export-panel active" id="export-panel-css">
+            <div class="export-preview-strip" id="export-strip-css"></div>
+            <div class="export-format-desc">Вставьте в ваш CSS-файл. Используйте переменные как <code>var(--color-dominant)</code> в любом месте стилей.</div>
+            <div class="export-label">CSS Custom Properties</div>
+            <div class="export-code" id="export-code-css"></div>
+            <button class="export-copy-btn" id="export-btn-css" onclick="copyExport('css')">◱ &nbsp;Скопировать CSS</button>
+        </div>
+
+        <div class="export-panel" id="export-panel-figma">
+            <div class="export-preview-strip" id="export-strip-figma"></div>
+            <div class="export-format-desc">Вставьте в Figma через плагин <em>Tokens Studio</em> или <em>Variables</em> → Import JSON. Цвета появятся как переменные в вашем дизайне.</div>
+            <div class="export-label">Design Tokens (JSON)</div>
+            <div class="export-code" id="export-code-figma"></div>
+            <button class="export-copy-btn" id="export-btn-figma" onclick="copyExport('figma')">◱ &nbsp;Скопировать JSON</button>
+        </div>
+
+        <div class="export-panel" id="export-panel-text">
+            <div class="export-preview-strip" id="export-strip-text"></div>
+            <div class="export-format-desc">Текстовый список для передачи цветов заказчику, в мессенджер, в документ или в ТЗ разработчику.</div>
+            <div class="export-label">Текстовый список</div>
+            <div class="export-code" id="export-code-text"></div>
+            <button class="export-copy-btn" id="export-btn-text" onclick="copyExport('text')">◱ &nbsp;Скопировать текст</button>
+        </div>
+
+        <div class="export-panel" id="export-panel-scss">
+            <div class="export-preview-strip" id="export-strip-scss"></div>
+            <div class="export-format-desc">SCSS-переменные для проектов на Sass/SCSS. Вставьте в <code>_variables.scss</code> и используйте как <code>$color-dominant</code>.</div>
+            <div class="export-label">SCSS Variables</div>
+            <div class="export-code" id="export-code-scss"></div>
+            <button class="export-copy-btn" id="export-btn-scss" onclick="copyExport('scss')">◱ &nbsp;Скопировать SCSS</button>
+        </div>
+    </div>
+</div>
 
 <footer>
     <span class="footer-brand">Palette Atelier &nbsp;·&nbsp; 2026</span>
@@ -3540,6 +3685,13 @@ function toggleSavedCard(card) {
 // ════════════════════════════════════════════════
 //  INIT
 // ════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        document.getElementById('exportModalOverlay')?.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     applyTheme('spring');
     renderSavedPalettes();
@@ -4188,6 +4340,162 @@ function renderPaletteStory(colors, season, mood, harmony) {
         block.classList.add('visible');
         setTimeout(() => typeStory(text, 'paletteStoryText', 22), 200);
     }, 300);
+}
+
+// ══════════════════════════════════════════════════════════
+//  ЭКСПОРТ ПАЛИТРЫ
+// ══════════════════════════════════════════════════════════
+
+const ROLE_KEYS = ['dominant','support-1','support-2','accent-1','accent-2','accent-3'];
+const ROLE_NAMES_RU = ['Доминанта','Поддержка 1','Поддержка 2','Акцент 1','Акцент 2','Акцент 3'];
+const ROLE_PCTS_EX  = ['60%','20%','10%','5%','3%','2%'];
+
+let _exportColors = [];
+let _activeExportTab = 'css';
+
+function generateExportCSS(colors) {
+    const palName = (document.getElementById('paletteName')?.textContent || 'palette')
+        .toLowerCase().replace(/[^a-zа-яё0-9]/gi,'').slice(0,20) || 'palette';
+    const lines = [
+        `/* Palette Atelier — ${document.getElementById('paletteName')?.textContent || 'Palette'} */`,
+        `/* ${document.getElementById('paletteSeason')?.textContent || ''} · ${new Date().getFullYear()} */`,
+        `:root {`
+    ];
+    colors.forEach((c, i) => {
+        const hsl = hexToHSL(c.hex);
+        lines.push(`    --color-${ROLE_KEYS[i]}: ${c.hex};   /* ${c.name} · ${ROLE_PCTS_EX[i]} */`);
+        lines.push(`    --color-${ROLE_KEYS[i]}-hsl: ${Math.round(hsl.h)} ${Math.round(hsl.s)}% ${Math.round(hsl.l)}%;`);
+    });
+    lines.push(`}`);
+    return lines.join('\n');
+}
+
+function generateExportFigma(colors) {
+    const palName = document.getElementById('paletteName')?.textContent || 'Palette';
+    const tokens = {};
+    colors.forEach((c, i) => {
+        const hsl = hexToHSL(c.hex);
+        tokens[ROLE_KEYS[i]] = {
+            value: c.hex,
+            type: 'color',
+            description: `${c.name} · ${ROLE_NAMES_RU[i]} · ${ROLE_PCTS_EX[i]}`
+        };
+    });
+    const out = {
+        [palName]: {
+            $description: `Palette Atelier · ${document.getElementById('paletteSeason')?.textContent || ''}`,
+            colors: tokens
+        }
+    };
+    return JSON.stringify(out, null, 2);
+}
+
+function generateExportText(colors) {
+    const palName  = document.getElementById('paletteName')?.textContent || 'Palette';
+    const season   = document.getElementById('paletteSeason')?.textContent || '';
+    const lines = [
+        `ПАЛИТРА: ${palName}`,
+        `СЕЗОН: ${season}`,
+        `ДАТА: ${new Date().toLocaleDateString('ru-RU')}`,
+        `ИСТОЧНИК: Palette Atelier`,
+        ``,
+        `─────────────────────────────`,
+    ];
+    colors.forEach((c, i) => {
+        const hsl = hexToHSL(c.hex);
+        lines.push(`${ROLE_NAMES_RU[i].toUpperCase()} (${ROLE_PCTS_EX[i]})`);
+        lines.push(`  Название:  ${c.name}`);
+        lines.push(`  HEX:       ${c.hex}`);
+        lines.push(`  RGB:       ${parseInt(c.hex.slice(1,3),16)}, ${parseInt(c.hex.slice(3,5),16)}, ${parseInt(c.hex.slice(5,7),16)}`);
+        lines.push(`  HSL:       ${Math.round(hsl.h)}° ${Math.round(hsl.s)}% ${Math.round(hsl.l)}%`);
+        lines.push(`─────────────────────────────`);
+    });
+    return lines.join('\n');
+}
+
+function generateExportSCSS(colors) {
+    const palName = document.getElementById('paletteName')?.textContent || 'Palette';
+    const lines = [
+        `// Palette Atelier — ${palName}`,
+        `// ${document.getElementById('paletteSeason')?.textContent || ''} · ${new Date().getFullYear()}`,
+        ``
+    ];
+    colors.forEach((c, i) => {
+        lines.push(`$color-${ROLE_KEYS[i]}:   ${c.hex};  // ${c.name} · ${ROLE_PCTS_EX[i]}`);
+    });
+    lines.push(``);
+    lines.push(`// Удобная карта для @each`);
+    lines.push(`$palette: (`);
+    colors.forEach((c, i) => {
+        lines.push(`    "${ROLE_KEYS[i]}": ${c.hex},`);
+    });
+    lines.push(`);`);
+    return lines.join('\n');
+}
+
+function buildExportPreviewStrip(containerId, colors) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = colors.map((c,i) => {
+        const flex = [60,20,10,5,3,2][i];
+        return `<div class="export-preview-seg" style="flex:${flex};background:${c.hex};height:12px;"></div>`;
+    }).join('');
+}
+
+function openExportModal() {
+    if (!currentColors || currentColors.length === 0) return;
+    _exportColors = currentColors;
+    populateExportPanel('css');
+    populateExportPanel('figma');
+    populateExportPanel('text');
+    populateExportPanel('scss');
+    ['css','figma','text','scss'].forEach(t => buildExportPreviewStrip(`export-strip-${t}`, _exportColors));
+    document.getElementById('exportModalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeExportModal(e) {
+    if (e && e.target !== document.getElementById('exportModalOverlay') && !e.target.classList.contains('export-modal-close')) return;
+    document.getElementById('exportModalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function switchExportTab(tab) {
+    _activeExportTab = tab;
+    document.querySelectorAll('.export-tab').forEach(t => {
+        t.classList.toggle('active', t.getAttribute('onclick') === `switchExportTab('${tab}')`);
+    });
+    document.querySelectorAll('.export-panel').forEach(p => {
+        p.classList.toggle('active', p.id === `export-panel-${tab}`);
+    });
+}
+
+function populateExportPanel(tab) {
+    const generators = {
+        css:   generateExportCSS,
+        figma: generateExportFigma,
+        text:  generateExportText,
+        scss:  generateExportSCSS,
+    };
+    const code = generators[tab](_exportColors);
+    const el   = document.getElementById(`export-code-${tab}`);
+    if (el) el.textContent = code;
+}
+
+function copyExport(tab) {
+    const el  = document.getElementById(`export-code-${tab}`);
+    const btn = document.getElementById(`export-btn-${tab}`);
+    if (!el || !btn) return;
+    const text = el.textContent;
+    navigator.clipboard.writeText(text).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    });
+    const orig = btn.textContent;
+    btn.textContent = '✓  Скопировано!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
 }
 
 // ══════════════════════════════════════════════════════════
