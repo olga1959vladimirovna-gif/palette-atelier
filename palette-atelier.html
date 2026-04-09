@@ -1543,6 +1543,192 @@
             .fabric-strip { height: 72px; }
         }
 
+        /* ══════════════════════════════
+           МУД-БОРД
+        ══════════════════════════════ */
+        .moodboard-section {
+            display: none;
+            margin-top: 80px;
+            padding-top: 48px;
+            border-top: 2px solid var(--accent);
+            transition: border-color 0.7s;
+        }
+        .moodboard-section.visible { display: block; animation: revealUp 0.5s ease both; }
+
+        .moodboard-header {
+            display: flex; align-items: flex-end;
+            justify-content: space-between; flex-wrap: wrap;
+            gap: 16px; margin-bottom: 32px;
+        }
+        .moodboard-section-label {
+            font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 6px; transition: color 0.7s;
+        }
+        .moodboard-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px; font-style: italic; font-weight: 400; color: var(--text);
+        }
+        .moodboard-dl-btn {
+            padding: 12px 24px; background: var(--text); color: white; border: none;
+            font-family: 'Montserrat', sans-serif; font-size: 9px; letter-spacing: 3px;
+            text-transform: uppercase; cursor: pointer; transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .moodboard-dl-btn:hover { background: var(--accent); }
+
+        /* Доска */
+        .moodboard-board {
+            background: #F9F7F4;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Сетка плиток */
+        .moodboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(8, 36px);
+            gap: 6px;
+        }
+
+        /* Базовые плитки цвета */
+        .mb-tile {
+            position: relative; overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .mb-tile:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(0,0,0,0.14); z-index: 2; }
+        .mb-tile-inner { width: 100%; height: 100%; position: relative; }
+
+        /* Текстурные оверлеи (те же data-tex) */
+        .mb-tile .mb-tex {
+            position: absolute; inset: 0; pointer-events: none;
+        }
+        .mb-tile[data-tex="linen"] .mb-tex {
+            background:
+                repeating-linear-gradient(0deg,   rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 5px),
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 5px);
+        }
+        .mb-tile[data-tex="silk"] .mb-tex {
+            background: repeating-linear-gradient(135deg,
+                rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1px,
+                transparent 1px, transparent 10px);
+        }
+        .mb-tile[data-tex="velvet"] .mb-tex {
+            background: radial-gradient(circle, rgba(0,0,0,0.09) 1px, transparent 1px);
+            background-size: 5px 5px;
+        }
+        .mb-tile[data-tex="wool"] .mb-tex {
+            background:
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 4px),
+                repeating-linear-gradient(0deg,  rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 8px);
+        }
+
+        /* Плитка с текстом названия цвета */
+        .mb-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 16px 12px 10px;
+            background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .mb-label-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 12px; font-style: italic;
+            color: white; letter-spacing: 0.5px;
+        }
+        .mb-label-hex {
+            font-size: 8px; letter-spacing: 2px; color: rgba(255,255,255,0.7);
+            margin-top: 1px;
+        }
+
+        /* Плитка с названием палитры */
+        .mb-title-tile {
+            grid-column: span 5; grid-row: span 3;
+            background: white;
+            display: flex; flex-direction: column;
+            justify-content: center; padding: 20px 24px;
+            border-left: 4px solid var(--accent);
+            transition: border-color 0.7s;
+        }
+        .mb-title-season {
+            font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 8px; transition: color 0.7s;
+        }
+        .mb-title-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px; font-style: italic; color: var(--text);
+            line-height: 1.2; margin-bottom: 10px;
+        }
+        .mb-title-story {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 11px; font-style: italic;
+            color: var(--muted); line-height: 1.6;
+        }
+
+        /* Плитка с процентами/ролями */
+        .mb-roles-tile {
+            grid-column: span 4; grid-row: span 2;
+            background: white; padding: 14px 16px;
+            display: flex; flex-direction: column; justify-content: center; gap: 6px;
+        }
+        .mb-role-row {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .mb-role-dot { width: 10px; height: 10px; flex-shrink: 0; }
+        .mb-role-label {
+            font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--muted); flex: 1;
+        }
+        .mb-role-pct {
+            font-size: 9px; letter-spacing: 1px; color: var(--accent);
+            transition: color 0.7s;
+        }
+
+        /* Мини-полоса пропорций внизу */
+        .mb-strip-tile {
+            grid-column: span 12; grid-row: span 1;
+            display: flex; overflow: hidden; gap: 2px;
+        }
+        .mb-strip-seg {
+            flex: 1; position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .mb-strip-seg-lbl {
+            font-size: 7px; letter-spacing: 2px; text-transform: uppercase;
+            color: white; opacity: 0.85; white-space: nowrap;
+        }
+
+        /* Подпись-копирайт */
+        .mb-copy-tile {
+            grid-column: span 3; grid-row: span 1;
+            background: var(--text); display: flex;
+            align-items: center; justify-content: center; padding: 8px;
+        }
+        .mb-copy-text {
+            font-size: 7px; letter-spacing: 3px; text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Flash при копировании */
+        .mb-tile-flash {
+            position: absolute; inset: 0;
+            background: rgba(var(--accent-rgb), 0.82);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s;
+            font-size: 8px; letter-spacing: 3px; color: white; text-transform: uppercase;
+        }
+        .mb-tile-flash.show { opacity: 1; }
+
+        @media (max-width: 768px) {
+            .moodboard-board { padding: 16px; }
+            .moodboard-grid { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(14, 30px); }
+            .mb-title-tile { grid-column: span 6; }
+            .mb-roles-tile { grid-column: span 6; }
+            .mb-strip-tile { grid-column: span 6; }
+            .mb-copy-tile  { grid-column: span 3; }
+        }
+
         @media (max-width: 768px) {
             .explorer-chips { grid-template-columns: repeat(3,1fr); }
             .explorer-chip-swatch { height: 80px; }
@@ -1946,6 +2132,21 @@
             <div class="scene-legend" id="sceneLegend">
                 <!-- Легенда рендерится через JS -->
             </div>
+        </div>
+    </div>
+
+    <!-- Муд-борд -->
+    <div class="moodboard-section" id="moodboardSection">
+        <div class="moodboard-header">
+            <div>
+                <div class="moodboard-section-label">Доска вдохновения</div>
+                <div class="moodboard-section-title">Mood Board</div>
+            </div>
+            <button class="moodboard-dl-btn" onclick="downloadMoodboard()"
+                data-tip="Скачать Mood Board как картинку PNG&#10;— для презентаций и клиентов">↓ Скачать Mood Board</button>
+        </div>
+        <div class="moodboard-board" id="moodboardBoard">
+            <div class="moodboard-grid" id="moodboardGrid"></div>
         </div>
     </div>
 
@@ -2785,6 +2986,8 @@ function generatePalette() {
     renderUsageGuide(selected);
     showSceneSection(selected);
     renderFabricCollage(selected);
+    // Муд-борд — с задержкой, чтобы история успела напечататься
+    setTimeout(() => buildMoodboardLayout(selected), 800);
 
     document.getElementById('palettePlaceholder').style.display = 'none';
 
@@ -3986,6 +4189,152 @@ function renderPaletteStory(colors, season, mood, harmony) {
         setTimeout(() => typeStory(text, 'paletteStoryText', 22), 200);
     }, 300);
 }
+
+// ══════════════════════════════════════════════════════════
+//  МУД-БОРД
+// ══════════════════════════════════════════════════════════
+
+// Раскладка плиток: каждый элемент — { col, row, type, colorIdx, tex? }
+// Используем 12-колоночную сетку, 8 строк
+function buildMoodboardLayout(colors) {
+    const c = colors;
+    const mat = c.map(col => getMaterial(col.hex));
+    const pcts = ['60%','20%','10%','5%','3%','2%'];
+
+    // Получить первые 2 предложения из истории для подписи
+    const storyEl = document.getElementById('paletteStoryText');
+    const storySnippet = storyEl ? storyEl.textContent.split('.').slice(0,2).join('.') + '.' : '';
+    const palName  = document.getElementById('paletteName')?.textContent || 'Palette';
+    const season   = document.getElementById('paletteSeason')?.textContent || '';
+
+    const grid = document.getElementById('moodboardGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    // Строим плитки вручную — асимметричная сетка для живости
+
+    // 1. Большая плитка цвет 0 (60%) — 4 col × 5 row
+    grid.appendChild(makeTile(c[0], mat[0], pcts[0], 'span 4', 'span 5', true, 'mb0'));
+
+    // 2. Плитка цвет 1 (20%) — 3 col × 3 row
+    grid.appendChild(makeTile(c[1], mat[1], pcts[1], 'span 3', 'span 3', true, 'mb1'));
+
+    // 3. Плитка цвет 2 (10%) — 2 col × 3 row
+    grid.appendChild(makeTile(c[2], mat[2], pcts[2], 'span 2', 'span 3', true, 'mb2'));
+
+    // 4. Карточка с названием и историей — 3 col × 3 row
+    const titleTile = document.createElement('div');
+    titleTile.className = 'mb-tile mb-title-tile';
+    titleTile.style.gridColumn = 'span 3';
+    titleTile.style.gridRow    = 'span 3';
+    titleTile.innerHTML = `
+        <div class="mb-title-season">${season}</div>
+        <div class="mb-title-name">${palName}</div>
+        <div class="mb-title-story">${storySnippet}</div>`;
+    grid.appendChild(titleTile);
+
+    // 5. Плитка цвет 3 — 3 col × 2 row
+    grid.appendChild(makeTile(c[3], mat[3], pcts[3], 'span 3', 'span 2', false, 'mb3'));
+
+    // 6. Плитка цвет 4 — 2 col × 2 row
+    grid.appendChild(makeTile(c[4], mat[4], pcts[4], 'span 2', 'span 2', false, 'mb4'));
+
+    // 7. Карточка ролей — 4 col × 2 row
+    const rolesTile = document.createElement('div');
+    rolesTile.className = 'mb-tile mb-roles-tile';
+    rolesTile.style.gridColumn = 'span 4';
+    rolesTile.style.gridRow    = 'span 2';
+    rolesTile.innerHTML = `
+        ${c.map((col, i) => `
+        <div class="mb-role-row">
+            <div class="mb-role-dot" style="background:${col.hex}"></div>
+            <div class="mb-role-label">${mat[i].name}</div>
+            <div class="mb-role-pct">${pcts[i]}</div>
+        </div>`).join('')}`;
+    grid.appendChild(rolesTile);
+
+    // 8. Плитка цвет 5 — 3 col × 2 row
+    grid.appendChild(makeTile(c[5], mat[5], pcts[5], 'span 3', 'span 2', false, 'mb5'));
+
+    // 9. Пропорциональная полоса — 12 col × 1 row
+    const stripTile = document.createElement('div');
+    stripTile.className = 'mb-tile mb-strip-tile';
+    stripTile.style.gridColumn = 'span 12';
+    stripTile.style.gridRow    = 'span 1';
+    const flexVals = [60,20,10,5,3,2];
+    stripTile.innerHTML = c.map((col, i) => `
+        <div class="mb-strip-seg" style="flex:${flexVals[i]};background:${col.hex}">
+            <span class="mb-strip-seg-lbl">${pcts[i]}</span>
+        </div>`).join('');
+    grid.appendChild(stripTile);
+
+    // 10. Копирайт-плитка — 3 col × 1 row
+    const copyTile = document.createElement('div');
+    copyTile.className = 'mb-copy-tile';
+    copyTile.style.gridColumn = 'span 3';
+    copyTile.style.gridRow    = 'span 1';
+    copyTile.innerHTML = `<span class="mb-copy-text">Palette Atelier · 2026</span>`;
+    grid.appendChild(copyTile);
+
+    // Показываем секцию
+    document.getElementById('moodboardSection').classList.add('visible');
+}
+
+function makeTile(color, mat, pct, col, row, showLabel, uid) {
+    const textC = getContrastColor(color.hex);
+    const div   = document.createElement('div');
+    div.className  = 'mb-tile';
+    div.setAttribute('data-tex', mat.tex);
+    div.style.gridColumn = col;
+    div.style.gridRow    = row;
+    div.style.background = color.hex;
+    div.innerHTML = `
+        <div class="mb-tex"></div>
+        ${showLabel ? `
+        <div class="mb-label">
+            <div class="mb-label-name">${color.name}</div>
+            <div class="mb-label-hex">${color.hex} · ${mat.name} · ${pct}</div>
+        </div>` : ''}
+        <div class="mb-tile-flash" id="${uid}">Скопировано</div>`;
+    div.addEventListener('click', () => {
+        navigator.clipboard.writeText(color.hex).catch(() => {
+            const ta = document.createElement('textarea');
+            ta.value = color.hex; document.body.appendChild(ta);
+            ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        });
+        const f = document.getElementById(uid);
+        if (f) { f.classList.add('show'); setTimeout(() => f.classList.remove('show'), 900); }
+    });
+    return div;
+}
+
+function downloadMoodboard() {
+    const board = document.getElementById('moodboardBoard');
+    if (!board) return;
+
+    // Используем встроенный html2canvas если он есть,
+    // иначе делаем снимок через canvas вручную
+    if (typeof html2canvas !== 'undefined') {
+        html2canvas(board, { scale: 2, useCORS: true }).then(canvas => {
+            const a = document.createElement('a');
+            a.download = 'moodboard-palette-atelier.png';
+            a.href = canvas.toDataURL('image/png');
+            a.click();
+        });
+    } else {
+        // Fallback: скачать как SVG-данные через blob
+        const palName = document.getElementById('paletteName')?.textContent || 'palette';
+        alert('Для скачивания Mood Board откройте страницу и нажмите Ctrl+P → Сохранить как PDF, или используйте скриншот.');
+    }
+}
+
+// Подключить html2canvas динамически
+(function loadHtml2Canvas() {
+    if (typeof html2canvas !== 'undefined') return;
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    document.head.appendChild(s);
+})();
 
 function copyFabric(hex, uid) {
     navigator.clipboard.writeText(hex).catch(() => {
