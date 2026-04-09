@@ -2874,119 +2874,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ══════════════════════════════
-    // COLOR EXPLORER
-    // ══════════════════════════════
-
-    function hslToHex(h, s, l) {
-        s /= 100; l /= 100;
-        const k = n => (n + h / 30) % 12;
-        const a = s * Math.min(l, 1 - l);
-        const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-        return '#' + [f(0), f(8), f(4)].map(v => Math.round(v * 255).toString(16).padStart(2, '0')).join('');
-    }
-
-    function generateColorName(h, s, l) {
-        const lightWord = l > 80 ? 'Pâle' : l > 60 ? 'Clair' : l > 40 ? '' : l > 20 ? 'Profond' : 'Obscur';
-        const hueNames = [
-            [15,'Rouge'],[40,'Roux'],[55,'Ocre'],[70,'Ambre'],[90,'Or'],
-            [125,'Olive'],[160,'Vert'],[195,'Jade'],[225,'Ciel'],[255,'Bleu'],
-            [280,'Violet'],[320,'Rose'],[345,'Pourpre'],[360,'Rouge']
-        ];
-        let hueName = 'Neutre';
-        for (const [threshold, name] of hueNames) {
-            if (h <= threshold) { hueName = name; break; }
-        }
-        if (s < 15) hueName = l > 70 ? 'Ivoire' : l > 40 ? 'Gris' : 'Charbon';
-        return [lightWord, hueName].filter(Boolean).join(' ');
-    }
-
-    function generateCloseShades(hex) {
-        const {h, s} = hexToHSL(hex);
-        const lightnesses = [88, 76, 62, 48, 34, 20];
-        return lightnesses.map(l => {
-            const newHex = hslToHex(h, Math.max(10, s), l);
-            return { hex: newHex, name: generateColorName(h, s, l) };
-        });
-    }
-
-    function generateContrasting(hex) {
-        const {h, s, l} = hexToHSL(hex);
-        const angles = [180, 165, 195, 150, 210, 135];
-        return angles.map(offset => {
-            const newH = (h + offset) % 360;
-            const newHex = hslToHex(newH, s, l);
-            return { hex: newHex, name: generateColorName(newH, s, l) };
-        });
-    }
-
-    function generateIntermediate(hex) {
-        const {h, s, l} = hexToHSL(hex);
-        const angles = [60, 90, 120, 240, 270, 300];
-        return angles.map(offset => {
-            const newH = (h + offset) % 360;
-            const newHex = hslToHex(newH, s, l);
-            return { hex: newHex, name: generateColorName(newH, s, l) };
-        });
-    }
-
-    function renderExplorerGroup(containerId, colors) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = '';
-        colors.forEach(color => {
-            const textColor = getContrastColor(color.hex);
-            const chip = document.createElement('div');
-            chip.className = 'explorer-chip';
-            chip.innerHTML = `
-                <div class="explorer-chip-swatch" style="background:${color.hex}">
-                    <button class="explore-chip-btn" style="color:${textColor}" onclick="openColorExplorer('${color.hex}','${color.name}')">◎</button>
-                </div>
-                <div class="explorer-chip-name">${color.name}</div>
-                <div class="explorer-chip-hex">${color.hex}</div>
-            `;
-            chip.addEventListener('click', () => {
-                navigator.clipboard.writeText(color.hex).catch(() => {
-                    const ta = document.createElement('textarea');
-                    ta.value = color.hex; document.body.appendChild(ta);
-                    ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-                });
-                chip.style.outline = '2px solid var(--accent)';
-                setTimeout(() => chip.style.outline = '', 1000);
-            });
-            container.appendChild(chip);
-        });
-    }
-
-    function openColorExplorer(hex, name) {
-        const explorer = document.getElementById('colorExplorer');
-        document.getElementById('explorerSeedSwatch').style.background = hex;
-        document.getElementById('explorerSeedName').textContent = name || hex;
-        document.getElementById('explorerSeedHex').textContent = hex.toUpperCase();
-        document.getElementById('explorerHexInput').value = hex.replace('#', '');
-
-        renderExplorerGroup('explorerClose', generateCloseShades(hex));
-        renderExplorerGroup('explorerContrast', generateContrasting(hex));
-        renderExplorerGroup('explorerIntermediate', generateIntermediate(hex));
-
-        explorer.classList.add('visible');
-        setTimeout(() => explorer.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-    }
-
-    function closeColorExplorer() {
-        document.getElementById('colorExplorer').classList.remove('visible');
-    }
-
-    function exploreFromInput() {
-        let val = document.getElementById('explorerHexInput').value.trim().replace('#', '');
-        if (!/^[0-9a-fA-F]{6}$/.test(val)) {
-            document.getElementById('explorerHexInput').style.borderColor = '#e57373';
-            setTimeout(() => document.getElementById('explorerHexInput').style.borderColor = '', 1200);
-            return;
-        }
-        const hsl = hexToHSL('#' + val);
-        openColorExplorer('#' + val, generateColorName(hsl.h, hsl.s, hsl.l));
-    }
-
     // Шаг 9: показываем FAB после прокрутки за Hero
     const fab = document.getElementById('fabTop');
     window.addEventListener('scroll', () => {
@@ -2994,6 +2881,119 @@ document.addEventListener('DOMContentLoaded', () => {
         fab.classList.toggle('visible', window.scrollY > heroH * 0.7);
     }, { passive: true });
 });
+
+// ══════════════════════════════
+// COLOR EXPLORER  (глобальные функции — вызываются из onclick)
+// ══════════════════════════════
+
+function hslToHex(h, s, l) {
+    s /= 100; l /= 100;
+    const k = n => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    return '#' + [f(0), f(8), f(4)].map(v => Math.round(v * 255).toString(16).padStart(2, '0')).join('');
+}
+
+function generateColorName(h, s, l) {
+    const lightWord = l > 80 ? 'Pâle' : l > 60 ? 'Clair' : l > 40 ? '' : l > 20 ? 'Profond' : 'Obscur';
+    const hueNames = [
+        [15,'Rouge'],[40,'Roux'],[55,'Ocre'],[70,'Ambre'],[90,'Or'],
+        [125,'Olive'],[160,'Vert'],[195,'Jade'],[225,'Ciel'],[255,'Bleu'],
+        [280,'Violet'],[320,'Rose'],[345,'Pourpre'],[360,'Rouge']
+    ];
+    let hueName = 'Neutre';
+    for (const [threshold, name] of hueNames) {
+        if (h <= threshold) { hueName = name; break; }
+    }
+    if (s < 15) hueName = l > 70 ? 'Ivoire' : l > 40 ? 'Gris' : 'Charbon';
+    return [lightWord, hueName].filter(Boolean).join(' ');
+}
+
+function generateCloseShades(hex) {
+    const {h, s} = hexToHSL(hex);
+    const lightnesses = [88, 76, 62, 48, 34, 20];
+    return lightnesses.map(l => {
+        const newHex = hslToHex(h, Math.max(10, s), l);
+        return { hex: newHex, name: generateColorName(h, s, l) };
+    });
+}
+
+function generateContrasting(hex) {
+    const {h, s, l} = hexToHSL(hex);
+    const angles = [180, 165, 195, 150, 210, 135];
+    return angles.map(offset => {
+        const newH = (h + offset) % 360;
+        const newHex = hslToHex(newH, s, l);
+        return { hex: newHex, name: generateColorName(newH, s, l) };
+    });
+}
+
+function generateIntermediate(hex) {
+    const {h, s, l} = hexToHSL(hex);
+    const angles = [60, 90, 120, 240, 270, 300];
+    return angles.map(offset => {
+        const newH = (h + offset) % 360;
+        const newHex = hslToHex(newH, s, l);
+        return { hex: newHex, name: generateColorName(newH, s, l) };
+    });
+}
+
+function renderExplorerGroup(containerId, colors) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    colors.forEach(color => {
+        const textColor = getContrastColor(color.hex);
+        const chip = document.createElement('div');
+        chip.className = 'explorer-chip';
+        chip.innerHTML = `
+            <div class="explorer-chip-swatch" style="background:${color.hex}">
+                <button class="explore-chip-btn" style="color:${textColor}" onclick="event.stopPropagation();openColorExplorer('${color.hex}','${color.name}')">◎</button>
+            </div>
+            <div class="explorer-chip-name">${color.name}</div>
+            <div class="explorer-chip-hex">${color.hex}</div>
+        `;
+        chip.addEventListener('click', () => {
+            navigator.clipboard.writeText(color.hex).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = color.hex; document.body.appendChild(ta);
+                ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+            });
+            chip.style.outline = '2px solid var(--accent)';
+            setTimeout(() => chip.style.outline = '', 1000);
+        });
+        container.appendChild(chip);
+    });
+}
+
+function openColorExplorer(hex, name) {
+    const explorer = document.getElementById('colorExplorer');
+    document.getElementById('explorerSeedSwatch').style.background = hex;
+    document.getElementById('explorerSeedName').textContent = name || hex;
+    document.getElementById('explorerSeedHex').textContent = hex.toUpperCase();
+    document.getElementById('explorerHexInput').value = hex.replace('#', '');
+
+    renderExplorerGroup('explorerClose', generateCloseShades(hex));
+    renderExplorerGroup('explorerContrast', generateContrasting(hex));
+    renderExplorerGroup('explorerIntermediate', generateIntermediate(hex));
+
+    explorer.classList.add('visible');
+    setTimeout(() => explorer.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+}
+
+function closeColorExplorer() {
+    document.getElementById('colorExplorer').classList.remove('visible');
+}
+
+function exploreFromInput() {
+    let val = document.getElementById('explorerHexInput').value.trim().replace('#', '');
+    if (!/^[0-9a-fA-F]{6}$/.test(val)) {
+        document.getElementById('explorerHexInput').style.borderColor = '#e57373';
+        setTimeout(() => document.getElementById('explorerHexInput').style.borderColor = '', 1200);
+        return;
+    }
+    const hsl = hexToHSL('#' + val);
+    openColorExplorer('#' + val, generateColorName(hsl.h, hsl.s, hsl.l));
+}
 </script>
 </body>
 </html>
