@@ -3976,10 +3976,15 @@ function generateStory(colors, season, mood, harmony) {
 
 function renderPaletteStory(colors, season, mood, harmony) {
     const block = document.getElementById('paletteStory');
-    const text  = generateStory(colors, season, mood, harmony);
-    block.classList.add('visible');
-    // Небольшая задержка — появляется после основных карточек
-    setTimeout(() => typeStory(text, 'paletteStoryText', 22), 400);
+    if (!block) return;
+    block.classList.remove('visible');
+    document.getElementById('paletteStoryText').textContent = '';
+    const text = generateStory(colors, season, mood, harmony);
+    // Ждём пока paletteResult станет видимым, потом показываем историю
+    setTimeout(() => {
+        block.classList.add('visible');
+        setTimeout(() => typeStory(text, 'paletteStoryText', 22), 200);
+    }, 300);
 }
 
 function copyFabric(hex, uid) {
