@@ -947,6 +947,88 @@
         }
         .action-btn-tertiary:hover { color: var(--text); }
 
+        /* ══ КНОПКА ПОДЕЛИТЬСЯ + ПОПОВЕР ══ */
+        .share-btn {
+            padding: 18px 20px; background: transparent;
+            border: 1px solid var(--line);
+            font-family: 'Montserrat', sans-serif; font-size: 9px;
+            letter-spacing: 3px; text-transform: uppercase;
+            cursor: pointer; color: var(--muted);
+            transition: all 0.2s; position: relative;
+        }
+        .share-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .share-popover {
+            position: absolute;
+            bottom: calc(100% + 12px);
+            right: 0;
+            background: white;
+            border: 1px solid var(--line);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+            padding: 20px 20px 16px;
+            width: 340px;
+            z-index: 300;
+            display: none;
+            animation: revealUp 0.2s ease both;
+        }
+        .share-popover.open { display: block; }
+        .share-popover::after {
+            content: '';
+            position: absolute;
+            bottom: -7px; right: 24px;
+            width: 12px; height: 12px;
+            background: white;
+            border-right: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            transform: rotate(45deg);
+        }
+        .share-popover-title {
+            font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--muted); margin-bottom: 12px;
+        }
+        .share-link-row {
+            display: flex; gap: 0; margin-bottom: 14px;
+        }
+        .share-link-input {
+            flex: 1; padding: 10px 12px;
+            border: 1px solid var(--line); border-right: none;
+            font-family: 'Montserrat', sans-serif; font-size: 10px;
+            letter-spacing: 0.5px; color: var(--muted);
+            background: #F8F6F2; outline: none;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .share-link-copy {
+            padding: 10px 16px; background: var(--text); color: white;
+            border: none; font-family: 'Montserrat', sans-serif;
+            font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer; transition: background 0.2s; white-space: nowrap;
+        }
+        .share-link-copy:hover { background: var(--accent); }
+        .share-link-copy.copied { background: #4A7856; }
+        .share-socials {
+            display: flex; gap: 6px;
+        }
+        .share-social-btn {
+            flex: 1; padding: 9px 8px; border: 1px solid var(--line);
+            background: transparent; font-family: 'Montserrat', sans-serif;
+            font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase;
+            cursor: pointer; color: var(--muted); transition: all 0.2s;
+            text-align: center; text-decoration: none; display: block;
+        }
+        .share-social-btn:hover { background: var(--text); color: white; border-color: var(--text); }
+
+        /* Баннер «палитра из ссылки» */
+        .share-restored-banner {
+            display: none;
+            padding: 14px 20px; margin-bottom: 24px;
+            background: rgba(var(--accent-rgb), 0.08);
+            border-left: 3px solid var(--accent);
+            font-size: 11px; color: var(--text-muted);
+            transition: all 0.7s;
+        }
+        .share-restored-banner.visible { display: flex; align-items: center; gap: 12px; }
+        .share-restored-banner strong { color: var(--text); }
+
         /* ══ ЭКСПОРТ — МОДАЛЬНОЕ ОКНО ══ */
         .export-modal-overlay {
             position: fixed; inset: 0;
@@ -2322,6 +2404,12 @@
         <div id="proportionStrip"></div>
         <div id="neutralBase"></div>
 
+        <!-- Баннер восстановленной палитры -->
+        <div class="share-restored-banner" id="shareRestoredBanner">
+            <span>🔗</span>
+            <span>Палитра <strong id="shareRestoredName"></strong> восстановлена по ссылке</span>
+        </div>
+
         <div class="palette-actions">
             <button class="action-btn-primary" id="saveBtn" onclick="savePalette()"
                 data-tip="Сохранить палитру в раздел&#10;«Мои палитры» — она останется&#10;даже после закрытия страницы">♥ &nbsp;Сохранить палитру</button>
@@ -2329,6 +2417,22 @@
                 data-tip="Сгенерировать новый вариант&#10;палитры для того же образа&#10;или настроения">↻ &nbsp;Обновить</button>
             <button class="action-btn-tertiary" onclick="downloadPalette()"
                 data-tip="Скачать палитру как картинку PNG&#10;— удобно для презентаций&#10;и сохранения в галерею">↓ Скачать PNG</button>
+            <button class="share-btn" id="shareBtn" onclick="toggleSharePopover(event)"
+                data-tip="Поделиться палитрой — получить ссылку&#10;и отправить подруге или клиенту">
+                ↗ &nbsp;Поделиться
+                <div class="share-popover" id="sharePopover">
+                    <div class="share-popover-title">Ссылка на палитру</div>
+                    <div class="share-link-row">
+                        <input class="share-link-input" id="shareLinkInput" readonly type="text" value="" />
+                        <button class="share-link-copy" id="shareLinkCopy" onclick="copyShareLink(event)">Копировать</button>
+                    </div>
+                    <div class="share-socials">
+                        <a class="share-social-btn" id="shareTelegram" href="#" target="_blank" onclick="event.stopPropagation()">✈ Telegram</a>
+                        <a class="share-social-btn" id="shareWhatsapp" href="#" target="_blank" onclick="event.stopPropagation()">◎ WhatsApp</a>
+                        <a class="share-social-btn" id="shareVk" href="#" target="_blank" onclick="event.stopPropagation()">◈ VK</a>
+                    </div>
+                </div>
+            </button>
         </div>
 
         <!-- Скопировать все + Экспорт -->
@@ -3903,6 +4007,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('DOMContentLoaded', () => {
     applyTheme('spring');
     renderSavedPalettes();
+    restorePaletteFromURL();
 
     // Шаг 2: снимаем активный тег при ручном вводе
     const input = document.getElementById('moodInput');
@@ -4998,6 +5103,126 @@ function copyFabric(hex, uid) {
     if (!flash) return;
     flash.classList.add('show');
     setTimeout(() => flash.classList.remove('show'), 900);
+}
+
+// ══════════════════════════════════════════════════════════
+//  ПОДЕЛИТЬСЯ ПАЛИТРОЙ
+// ══════════════════════════════════════════════════════════
+
+function buildShareURL() {
+    if (!currentColors || currentColors.length === 0) return '';
+    const base = window.location.origin + window.location.pathname;
+    const params = new URLSearchParams();
+    params.set('hexes',  currentColors.map(c => c.hex.replace('#','')).join(','));
+    params.set('names',  currentColors.map(c => encodeURIComponent(c.name)).join(','));
+    params.set('season', currentSeason);
+    params.set('pname',  encodeURIComponent(document.getElementById('paletteName')?.textContent || ''));
+    return base + '?' + params.toString();
+}
+
+function toggleSharePopover(e) {
+    e.stopPropagation();
+    if (!currentColors || currentColors.length === 0) return;
+
+    const popover = document.getElementById('sharePopover');
+    const isOpen  = popover.classList.contains('open');
+
+    // Закрыть все открытые поповеры
+    document.querySelectorAll('.share-popover.open').forEach(p => p.classList.remove('open'));
+    if (isOpen) return;
+
+    const url = buildShareURL();
+    document.getElementById('shareLinkInput').value = url;
+
+    const encoded = encodeURIComponent(url);
+    const text    = encodeURIComponent('Смотри, какую палитру я создала в Palette Atelier 🎨');
+    document.getElementById('shareTelegram').href = `https://t.me/share/url?url=${encoded}&text=${text}`;
+    document.getElementById('shareWhatsapp').href = `https://wa.me/?text=${text}%20${encoded}`;
+    document.getElementById('shareVk').href       = `https://vk.com/share.php?url=${encoded}&title=${text}`;
+
+    popover.classList.add('open');
+}
+
+function copyShareLink(e) {
+    e.stopPropagation();
+    const url = document.getElementById('shareLinkInput').value;
+    const btn = document.getElementById('shareLinkCopy');
+    navigator.clipboard.writeText(url).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = url; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    });
+    btn.textContent = '✓ Скопировано';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Копировать'; btn.classList.remove('copied'); }, 2000);
+}
+
+// Закрыть поповер при клике вне него
+document.addEventListener('click', () => {
+    document.querySelectorAll('.share-popover.open').forEach(p => p.classList.remove('open'));
+});
+
+// Восстановить палитру из URL при загрузке страницы
+function restorePaletteFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const hexes  = params.get('hexes');
+    const names  = params.get('names');
+    const season = params.get('season');
+    const pname  = params.get('pname');
+
+    if (!hexes) return;
+
+    const hexArr  = hexes.split(',');
+    const nameArr = names ? names.split(',').map(n => decodeURIComponent(n)) : hexArr.map(() => '');
+    if (hexArr.length < 1) return;
+
+    // Восстанавливаем палитру
+    const colors = hexArr.map((h, i) => ({ hex: '#' + h, name: nameArr[i] || '#' + h }));
+
+    // Применяем сезон
+    const validSeason = ['spring','summer','autumn','winter'].includes(season) ? season : 'spring';
+    currentSeason = validSeason;
+    applyTheme(validSeason);
+    document.querySelectorAll('.season-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.season === validSeason);
+    });
+
+    // Устанавливаем currentColors и рендерим всё
+    currentColors = colors;
+    const palName = pname ? decodeURIComponent(pname) : 'Shared Palette';
+
+    document.getElementById('paletteName').textContent   = palName;
+    document.getElementById('paletteSeason').textContent = {'spring':'Весна','summer':'Лето','autumn':'Осень','winter':'Зима'}[validSeason];
+    document.getElementById('harmonyBadge').textContent  = '';
+    document.getElementById('moodDetected').textContent  = '';
+
+    // Показываем баннер
+    const banner = document.getElementById('shareRestoredBanner');
+    const nameEl = document.getElementById('shareRestoredName');
+    if (banner && nameEl) {
+        nameEl.textContent = palName;
+        banner.classList.add('visible');
+    }
+
+    // Рендерим все блоки
+    renderPaletteStory(colors, validSeason, '', 'free');
+    renderColorGrid(colors);
+    renderProportionStrip(colors);
+    renderNeutralBase(validSeason);
+    renderUsageGuide(colors);
+    showSceneSection(colors);
+    buildGradients(colors);
+    renderFabricCollage(colors);
+    setTimeout(() => buildMoodboardLayout(colors), 800);
+
+    // Показываем результат
+    document.getElementById('palettePlaceholder').style.display = 'none';
+    const result = document.getElementById('paletteResult');
+    result.classList.add('visible');
+    setTimeout(() => result.scrollIntoView({ behavior:'smooth', block:'start' }), 300);
+
+    // Убираем params из URL (чтобы обновление страницы не перезагружало)
+    window.history.replaceState({}, '', window.location.pathname);
 }
 </script>
 </body>
