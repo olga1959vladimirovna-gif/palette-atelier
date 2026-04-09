@@ -1658,6 +1658,51 @@
             font-size: 11px; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 36px;
         }
 
+        /* Блок «Куда применить» */
+        .gradient-howto {
+            margin-top: 32px;
+            border-top: 1px solid var(--line);
+            padding-top: 28px;
+        }
+        .gradient-howto-title {
+            font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+            color: var(--muted); margin-bottom: 20px;
+        }
+        .gradient-howto-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+        }
+        .gradient-howto-card {
+            background: white; border: 1px solid var(--line);
+            padding: 20px 18px 18px;
+        }
+        .gradient-howto-icon {
+            font-size: 22px; margin-bottom: 10px; display: block;
+        }
+        .gradient-howto-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 16px; font-style: italic; color: var(--text);
+            margin-bottom: 6px;
+        }
+        .gradient-howto-desc {
+            font-size: 10px; line-height: 1.7; color: var(--muted);
+            margin-bottom: 12px;
+        }
+        .gradient-howto-step {
+            font-size: 9px; letter-spacing: 1px; color: var(--text-muted);
+            line-height: 1.8;
+            border-left: 2px solid var(--accent);
+            padding-left: 10px;
+            transition: border-color 0.7s;
+        }
+        @media (max-width: 768px) {
+            .gradient-howto-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+        }
+        @media (max-width: 480px) {
+            .gradient-howto-grid { grid-template-columns: 1fr; }
+        }
+
         .gradient-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -2335,6 +2380,62 @@
         <div class="gradient-section-title">Палитра в переходах</div>
         <div class="gradient-section-sub">Нажмите на карточку — скопирует CSS-код градиента</div>
         <div class="gradient-grid" id="gradientGrid"></div>
+
+        <!-- Куда применить -->
+        <div class="gradient-howto">
+            <div class="gradient-howto-title">Куда вставить скопированный градиент</div>
+            <div class="gradient-howto-grid">
+
+                <div class="gradient-howto-card">
+                    <span class="gradient-howto-icon">🌐</span>
+                    <div class="gradient-howto-name">Сайт или лендинг</div>
+                    <div class="gradient-howto-desc">Фон главного экрана, секции, кнопки, карточки товаров.</div>
+                    <div class="gradient-howto-step">
+                        1. Нажмите «◱ CSS-код»<br>
+                        2. Откройте CSS-файл сайта<br>
+                        3. Вставьте: <em>background: …</em><br>
+                        4. Сохраните и обновите страницу
+                    </div>
+                </div>
+
+                <div class="gradient-howto-card">
+                    <span class="gradient-howto-icon">🎨</span>
+                    <div class="gradient-howto-name">Figma / Canva</div>
+                    <div class="gradient-howto-desc">Фон слайда, баннера, обложки поста или визитки.</div>
+                    <div class="gradient-howto-step">
+                        1. Нажмите «HEX» — скопирует цвета<br>
+                        2. В Figma: выделите элемент → Fill → Linear Gradient<br>
+                        3. Вставьте HEX в точки остановки<br>
+                        4. В Canva: фон → Градиент → выберите цвета
+                    </div>
+                </div>
+
+                <div class="gradient-howto-card">
+                    <span class="gradient-howto-icon">📱</span>
+                    <div class="gradient-howto-name">Соцсети и сторис</div>
+                    <div class="gradient-howto-desc">Фон для Instagram, Telegram-поста, обложки Reels или Pinterest.</div>
+                    <div class="gradient-howto-step">
+                        1. Нажмите «HEX» — скопирует цвета<br>
+                        2. Откройте приложение для сторис<br>
+                        (Unfold, Canva, Adobe Express)<br>
+                        3. Выберите «Градиент», вставьте цвета
+                    </div>
+                </div>
+
+                <div class="gradient-howto-card">
+                    <span class="gradient-howto-icon">🖨</span>
+                    <div class="gradient-howto-name">Печать и упаковка</div>
+                    <div class="gradient-howto-desc">Этикетки, открытки, подарочная упаковка, фирменные конверты.</div>
+                    <div class="gradient-howto-step">
+                        1. Нажмите «HEX» — скопирует цвета<br>
+                        2. Откройте Adobe Illustrator или Affinity<br>
+                        3. Инструмент «Градиент» → вставьте HEX<br>
+                        4. Передайте файл в типографию
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 
     <!-- Муд-борд -->
