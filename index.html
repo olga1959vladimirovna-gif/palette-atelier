@@ -890,6 +890,72 @@
         }
         .action-btn-tertiary:hover { color: var(--text); }
 
+        /* ══ ТУЛТИПЫ (всплывающие подсказки) ══ */
+        [data-tip] {
+            position: relative;
+        }
+        [data-tip]::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: #1A1A1A;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            font-style: normal;
+            letter-spacing: 0.5px;
+            line-height: 1.5;
+            white-space: pre-line;
+            text-align: center;
+            text-transform: none;
+            padding: 9px 14px;
+            border-radius: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            z-index: 200;
+            min-width: 180px;
+            max-width: 260px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+        }
+        [data-tip]::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            border: 6px solid transparent;
+            border-top-color: #1A1A1A;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            z-index: 200;
+        }
+        [data-tip]:hover::after,
+        [data-tip]:hover::before {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        /* Тултип снизу для кнопок у верхнего края экрана */
+        [data-tip-dir="down"]::after {
+            bottom: auto;
+            top: calc(100% + 10px);
+            transform: translateX(-50%) translateY(-4px);
+        }
+        [data-tip-dir="down"]::before {
+            bottom: auto;
+            top: calc(100% + 4px);
+            transform: translateX(-50%) translateY(-4px);
+            border-top-color: transparent;
+            border-bottom-color: #1A1A1A;
+        }
+        [data-tip-dir="down"]:hover::after,
+        [data-tip-dir="down"]:hover::before {
+            transform: translateX(-50%) translateY(0);
+        }
+
         /* ══ ШАГ 7: раскрытие сохранённой палитры ══ */
         .saved-card-expanded {
             display: none;
@@ -1520,7 +1586,8 @@
 
     <!-- Кнопка -->
     <div class="generate-wrap">
-        <button class="generate-btn" onclick="generatePalette()">
+        <button class="generate-btn" onclick="generatePalette()"
+            data-tip="Создать палитру по выбранному&#10;сезону, настроению и гармонии" data-tip-dir="down">
             <span>Создать палитру</span>
         </button>
         <div class="validation-hint" id="validationHint"></div>
@@ -1574,14 +1641,18 @@
         <div id="neutralBase"></div>
 
         <div class="palette-actions">
-            <button class="action-btn-primary" id="saveBtn" onclick="savePalette()">♥ &nbsp;Сохранить палитру</button>
-            <button class="action-btn-secondary" onclick="generatePalette()">↻ &nbsp;Обновить</button>
-            <button class="action-btn-tertiary" onclick="downloadPalette()">↓ Скачать PNG</button>
+            <button class="action-btn-primary" id="saveBtn" onclick="savePalette()"
+                data-tip="Сохранить палитру в раздел&#10;«Мои палитры» — она останется&#10;даже после закрытия страницы">♥ &nbsp;Сохранить палитру</button>
+            <button class="action-btn-secondary" onclick="generatePalette()"
+                data-tip="Сгенерировать новый вариант&#10;палитры для того же образа&#10;или настроения">↻ &nbsp;Обновить</button>
+            <button class="action-btn-tertiary" onclick="downloadPalette()"
+                data-tip="Скачать палитру как картинку PNG&#10;— удобно для презентаций&#10;и сохранения в галерею">↓ Скачать PNG</button>
         </div>
 
         <!-- Скопировать все (Фаза 4.4) -->
         <div class="copy-all-wrap">
-            <button class="copy-all-btn" onclick="copyAllColors()">◱ &nbsp;Скопировать все цвета и роли</button>
+            <button class="copy-all-btn" onclick="copyAllColors()"
+                data-tip="Скопировать все 6 цветов палитры&#10;с их HEX-кодами и ролями&#10;(доминанта, поддержка, акцент)&#10;одним текстом — вставить куда угодно">◱ &nbsp;Скопировать все цвета и роли</button>
         </div>
 
         <!-- Руководство по применению (Фаза 5) -->
@@ -1596,11 +1667,16 @@
         <div class="scene-section-sub">Выберите сцену и увидите, как цвета работают в реальном контексте</div>
 
         <div class="scene-tabs">
-            <button class="scene-tab active" onclick="switchScene('fashion')">👗 Образ</button>
-            <button class="scene-tab" onclick="switchScene('interior')">🛋 Интерьер</button>
-            <button class="scene-tab" onclick="switchScene('product')">📦 Карточка товара</button>
-            <button class="scene-tab" onclick="switchScene('pattern')">🎨 Принт</button>
-            <button class="scene-tab" onclick="switchScene('branding')">✦ Брендинг</button>
+            <button class="scene-tab active" onclick="switchScene('fashion')"
+                data-tip="Силуэт образа: пальто, блуза,&#10;юбка, сумка, обувь, украшение">👗 Образ</button>
+            <button class="scene-tab" onclick="switchScene('interior')"
+                data-tip="Интерьер: стена, диван, пол,&#10;шторы, подушки, декор">🛋 Интерьер</button>
+            <button class="scene-tab" onclick="switchScene('product')"
+                data-tip="E-commerce карточка товара:&#10;фон, карточка, заголовок,&#10;кнопка, цена, бейдж">📦 Карточка товара</button>
+            <button class="scene-tab" onclick="switchScene('pattern')"
+                data-tip="Геометрический принт-паттерн&#10;из всех 6 цветов палитры">🎨 Принт</button>
+            <button class="scene-tab" onclick="switchScene('branding')"
+                data-tip="Брендинг и визитка:&#10;логотип, шрифт, линии,&#10;акцентный элемент">✦ Брендинг</button>
         </div>
 
         <div class="scene-stage">
@@ -2482,7 +2558,8 @@ function renderColorGrid(colors) {
                 <div class="color-lbar-label">Светлота ${lPct}%</div>
             </div>
             <div class="copied-flash" id="flash-${uid}"><span>Скопировано</span></div>
-            <button class="explore-btn" onclick="event.stopPropagation();openColorExplorer('${color.hex}','${color.name}')">◎ Исследовать</button>
+            <button class="explore-btn" onclick="event.stopPropagation();openColorExplorer('${color.hex}','${color.name}')"
+                data-tip="Открыть Исследователь цвета:&#10;близкие оттенки, контрастные&#10;и промежуточные цвета">◎ Исследовать</button>
         `;
         card.addEventListener('click', () => copyColor(color.hex, uid));
         grid.appendChild(card);
