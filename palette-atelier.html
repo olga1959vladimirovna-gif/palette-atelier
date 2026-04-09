@@ -1229,6 +1229,104 @@
             .explorer-header { flex-direction: column; align-items: flex-start; }
             .explorer-input-wrap { width: 100%; max-width: 100%; margin-left: 0; }
         }
+
+        /* ══════════════════════════════
+           ПРИМЕНЕНИЕ ПАЛИТРЫ — СЦЕНЫ
+        ══════════════════════════════ */
+        .scene-section {
+            display: none;
+            margin-top: 80px;
+            padding-top: 48px;
+            border-top: 2px solid var(--accent);
+            transition: border-color 0.7s;
+        }
+        .scene-section.visible { display: block; animation: revealUp 0.5s ease both; }
+
+        .scene-section-label {
+            font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 6px; transition: color 0.7s;
+        }
+        .scene-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px; font-style: italic; font-weight: 400;
+            color: var(--text); margin-bottom: 8px;
+        }
+        .scene-section-sub {
+            font-size: 11px; letter-spacing: 1.5px; color: var(--muted);
+            margin-bottom: 36px;
+        }
+
+        /* Табы сцен */
+        .scene-tabs {
+            display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 32px;
+        }
+        .scene-tab {
+            padding: 10px 20px; background: transparent;
+            border: 1px solid var(--line); font-family: 'Montserrat', sans-serif;
+            font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+            cursor: pointer; color: var(--muted); transition: all 0.2s;
+        }
+        .scene-tab:hover { border-color: var(--accent); color: var(--accent); }
+        .scene-tab.active {
+            background: var(--text); color: white; border-color: var(--text);
+        }
+
+        /* Область превью */
+        .scene-stage {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+        .scene-preview {
+            background: white;
+            box-shadow: 0 2px 24px rgba(0,0,0,0.07);
+            overflow: hidden;
+            position: relative;
+        }
+        .scene-preview svg { display: block; width: 100%; height: auto; }
+
+        /* Легенда зон */
+        .scene-legend {
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .scene-legend-title {
+            font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--muted); margin-bottom: 4px;
+        }
+        .scene-legend-item {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .scene-legend-swatch {
+            width: 36px; height: 36px; flex-shrink: 0; cursor: pointer;
+            transition: transform 0.15s;
+        }
+        .scene-legend-swatch:hover { transform: scale(1.08); }
+        .scene-legend-info { flex: 1; }
+        .scene-legend-zone {
+            font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--muted);
+        }
+        .scene-legend-hex {
+            font-size: 11px; letter-spacing: 1.5px; color: var(--text);
+            margin-top: 2px;
+        }
+        .scene-legend-pct {
+            font-size: 9px; letter-spacing: 1px; color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* Переключатель цветовой раскладки */
+        .scene-swap-hint {
+            font-size: 10px; letter-spacing: 1px; color: var(--muted);
+            margin-top: 20px; font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .scene-stage { grid-template-columns: 1fr; }
+            .scene-tabs { gap: 6px; }
+            .scene-tab { padding: 8px 14px; font-size: 8px; }
+        }
     </style>
 </head>
 <body>
@@ -1489,6 +1587,30 @@
         <!-- Руководство по применению (Фаза 5) -->
         <div id="usageGuide"></div>
 
+    </div>
+
+    <!-- Применение палитры — Сцены -->
+    <div class="scene-section" id="sceneSection">
+        <div class="scene-section-label">Применение палитры</div>
+        <div class="scene-section-title">Ваша палитра в действии</div>
+        <div class="scene-section-sub">Выберите сцену и увидите, как цвета работают в реальном контексте</div>
+
+        <div class="scene-tabs">
+            <button class="scene-tab active" onclick="switchScene('fashion')">👗 Образ</button>
+            <button class="scene-tab" onclick="switchScene('interior')">🛋 Интерьер</button>
+            <button class="scene-tab" onclick="switchScene('product')">📦 Карточка товара</button>
+            <button class="scene-tab" onclick="switchScene('pattern')">🎨 Принт</button>
+            <button class="scene-tab" onclick="switchScene('branding')">✦ Брендинг</button>
+        </div>
+
+        <div class="scene-stage">
+            <div class="scene-preview" id="scenePreview">
+                <!-- SVG рендерится через JS -->
+            </div>
+            <div class="scene-legend" id="sceneLegend">
+                <!-- Легенда рендерится через JS -->
+            </div>
+        </div>
     </div>
 
     <!-- Color Explorer -->
@@ -2310,6 +2432,7 @@ function generatePalette() {
     renderProportionStrip(selected);
     renderNeutralBase(currentSeason);
     renderUsageGuide(selected);
+    showSceneSection(selected);
 
     document.getElementById('palettePlaceholder').style.display = 'none';
 
@@ -2993,6 +3116,311 @@ function exploreFromInput() {
     }
     const hsl = hexToHSL('#' + val);
     openColorExplorer('#' + val, generateColorName(hsl.h, hsl.s, hsl.l));
+}
+
+// ══════════════════════════════════════════════════════════
+//  ПРИМЕНЕНИЕ ПАЛИТРЫ — СЦЕНЫ
+// ══════════════════════════════════════════════════════════
+
+let currentScene = 'fashion';
+
+// Конфигурация зон для каждой сцены
+const SCENE_ZONES = {
+    fashion: [
+        { id: 'z-coat',   label: 'Верхняя одежда', pct: '60%' },
+        { id: 'z-top',    label: 'Верх (блуза)',   pct: '20%' },
+        { id: 'z-bottom', label: 'Низ (юбка)',      pct: '10%' },
+        { id: 'z-bag',    label: 'Сумка',           pct: '5%'  },
+        { id: 'z-shoes',  label: 'Обувь',           pct: '3%'  },
+        { id: 'z-acc',    label: 'Аксессуар',       pct: '2%'  },
+    ],
+    interior: [
+        { id: 'z-wall',    label: 'Стена',          pct: '60%' },
+        { id: 'z-sofa',    label: 'Диван',          pct: '20%' },
+        { id: 'z-floor',   label: 'Пол',            pct: '10%' },
+        { id: 'z-curtain', label: 'Шторы',          pct: '5%'  },
+        { id: 'z-cushion', label: 'Подушки',        pct: '3%'  },
+        { id: 'z-decor',   label: 'Декор',          pct: '2%'  },
+    ],
+    product: [
+        { id: 'z-bg',      label: 'Фон карточки',  pct: '60%' },
+        { id: 'z-card',    label: 'Карточка',       pct: '20%' },
+        { id: 'z-title',   label: 'Заголовок',      pct: '10%' },
+        { id: 'z-btn',     label: 'Кнопка',         pct: '5%'  },
+        { id: 'z-price',   label: 'Цена',           pct: '3%'  },
+        { id: 'z-tag',     label: 'Тег/бейдж',      pct: '2%'  },
+    ],
+    pattern: [
+        { id: 'z-p1', label: 'Фон',         pct: '60%' },
+        { id: 'z-p2', label: 'Основной мотив', pct: '20%' },
+        { id: 'z-p3', label: 'Контур',       pct: '10%' },
+        { id: 'z-p4', label: 'Точки',        pct: '5%'  },
+        { id: 'z-p5', label: 'Линии',        pct: '3%'  },
+        { id: 'z-p6', label: 'Акцент',       pct: '2%'  },
+    ],
+    branding: [
+        { id: 'z-brand-bg',   label: 'Фон бренда',  pct: '60%' },
+        { id: 'z-brand-card', label: 'Визитка',      pct: '20%' },
+        { id: 'z-brand-logo', label: 'Логотип',      pct: '10%' },
+        { id: 'z-brand-text', label: 'Текст',        pct: '5%'  },
+        { id: 'z-brand-line', label: 'Линия',        pct: '3%'  },
+        { id: 'z-brand-dot',  label: 'Акцентная точка', pct: '2%' },
+    ],
+};
+
+// SVG для каждой сцены
+function buildFashionSVG(c) {
+    return `<svg viewBox="0 0 320 480" xmlns="http://www.w3.org/2000/svg">
+        <!-- Фон -->
+        <rect width="320" height="480" fill="#F8F6F2"/>
+        <!-- Пальто/верхняя одежда (z-coat) -->
+        <path id="z-coat" d="M100,90 L80,100 L60,180 L60,360 L260,360 L260,180 L240,100 L220,90
+                              L200,110 L160,120 L120,110 Z" fill="${c[0]}"/>
+        <!-- Воротник -->
+        <path d="M120,110 L160,130 L200,110 L185,90 L160,100 L135,90 Z" fill="${c[1]}" opacity="0.9"/>
+        <!-- Юбка / низ (z-bottom) -->
+        <path id="z-bottom" d="M90,360 Q90,440 160,460 Q230,440 230,360 Z" fill="${c[2]}"/>
+        <!-- Обувь (z-shoes) -->
+        <ellipse id="z-shoes" cx="130" cy="468" rx="22" ry="8" fill="${c[4]}"/>
+        <ellipse id="z-shoes2" cx="190" cy="468" rx="22" ry="8" fill="${c[4]}"/>
+        <!-- Сумка (z-bag) -->
+        <rect id="z-bag" x="224" y="260" width="44" height="36" rx="4" fill="${c[3]}"/>
+        <path d="M232,260 Q244,248 256,260" stroke="${c[3]}" stroke-width="3" fill="none" opacity="0.7"/>
+        <!-- Голова -->
+        <ellipse cx="160" cy="52" rx="28" ry="32" fill="#E8C9A0"/>
+        <!-- Волосы -->
+        <path d="M132,44 Q160,20 188,44 L186,60 Q160,52 134,60 Z" fill="#5C3A1E"/>
+        <!-- Лицо — черты -->
+        <ellipse cx="151" cy="52" rx="3" ry="3.5" fill="#3A2010"/>
+        <ellipse cx="169" cy="52" rx="3" ry="3.5" fill="#3A2010"/>
+        <path d="M152,62 Q160,68 168,62" stroke="#C06060" stroke-width="1.5" fill="none"/>
+        <!-- Блуза (z-top) — видна из-под пальто -->
+        <path id="z-top" d="M130,130 L130,360 L190,360 L190,130 Q160,140 130,130 Z" fill="${c[1]}" opacity="0.5"/>
+        <!-- Аксессуар (z-acc) — ожерелье -->
+        <path id="z-acc" d="M142,128 Q160,138 178,128" stroke="${c[5]}" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="160" cy="140" r="4" fill="${c[5]}"/>
+        <!-- Пуговицы пальто -->
+        <circle cx="160" cy="200" r="4" fill="${c[5]}" opacity="0.8"/>
+        <circle cx="160" cy="230" r="4" fill="${c[5]}" opacity="0.8"/>
+        <circle cx="160" cy="260" r="4" fill="${c[5]}" opacity="0.8"/>
+    </svg>`;
+}
+
+function buildInteriorSVG(c) {
+    return `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+        <!-- Стена (z-wall) -->
+        <rect id="z-wall" width="400" height="320" fill="${c[0]}"/>
+        <!-- Пол (z-floor) -->
+        <path id="z-floor" d="M0,220 L400,220 L400,320 L0,320 Z" fill="${c[2]}"/>
+        <!-- Линия плинтуса -->
+        <rect x="0" y="218" width="400" height="4" fill="${c[2]}" opacity="0.6"/>
+        <!-- Шторы левая (z-curtain) -->
+        <path id="z-curtain-l" d="M0,0 Q30,40 20,140 Q10,220 0,220 L0,0 Z" fill="${c[3]}"/>
+        <path d="M0,0 Q40,30 30,100 Q20,160 0,200" stroke="${c[3]}" stroke-width="2" fill="none" opacity="0.4"/>
+        <!-- Шторы правая -->
+        <path id="z-curtain-r" d="M400,0 Q370,40 380,140 Q390,220 400,220 L400,0 Z" fill="${c[3]}"/>
+        <!-- Диван (z-sofa) -->
+        <rect id="z-sofa" x="60" y="190" width="280" height="80" rx="8" fill="${c[1]}"/>
+        <rect x="60" y="190" width="280" height="18" rx="8" fill="${c[1]}" opacity="0.7"/>
+        <!-- Спинка дивана -->
+        <rect x="60" y="160" width="280" height="38" rx="6" fill="${c[1]}"/>
+        <!-- Подлокотники -->
+        <rect x="52" y="162" width="20" height="108" rx="6" fill="${c[1]}" opacity="0.85"/>
+        <rect x="328" y="162" width="20" height="108" rx="6" fill="${c[1]}" opacity="0.85"/>
+        <!-- Подушки (z-cushion) -->
+        <rect id="z-cushion" x="92" y="168" width="60" height="54" rx="10" fill="${c[4]}"/>
+        <rect x="170" y="168" width="60" height="54" rx="10" fill="${c[4]}" opacity="0.85"/>
+        <rect x="248" y="168" width="60" height="54" rx="10" fill="${c[4]}" opacity="0.7"/>
+        <!-- Столик журнальный -->
+        <rect x="138" y="268" width="124" height="8" rx="2" fill="${c[2]}" opacity="0.6"/>
+        <rect x="148" y="276" width="8" height="28" fill="${c[2]}" opacity="0.5"/>
+        <rect x="244" y="276" width="8" height="28" fill="${c[2]}" opacity="0.5"/>
+        <!-- Книга на столе -->
+        <rect x="168" y="262" width="30" height="6" rx="1" fill="${c[5]}"/>
+        <!-- Ваза -->
+        <path d="M196,230 Q200,210 204,230 Q208,248 200,252 Q192,248 196,230 Z" fill="${c[5]}" opacity="0.9"/>
+        <!-- Стебель -->
+        <line x1="200" y1="210" x2="200" y2="232" stroke="${c[5]}" stroke-width="1.5" opacity="0.7"/>
+        <circle cx="200" cy="206" r="6" fill="${c[5]}" opacity="0.8"/>
+        <!-- Картина на стене (z-decor) -->
+        <rect id="z-decor" x="158" y="40" width="84" height="64" rx="2" fill="white" opacity="0.9"/>
+        <rect x="162" y="44" width="76" height="56" rx="1" fill="${c[5]}" opacity="0.3"/>
+        <ellipse cx="200" cy="72" rx="20" ry="16" fill="${c[5]}" opacity="0.5"/>
+        <!-- Лампа -->
+        <rect x="52" y="60" width="6" height="120" fill="${c[0]}" opacity="0.5"/>
+        <path d="M22,60 L82,60 L72,88 L32,88 Z" fill="${c[3]}" opacity="0.8"/>
+        <rect x="48" y="180" width="14" height="8" rx="2" fill="${c[2]}" opacity="0.7"/>
+        <!-- Окно -->
+        <rect x="280" y="30" width="80" height="120" rx="2" fill="#D6EEFF" opacity="0.6"/>
+        <line x1="320" y1="30" x2="320" y2="150" stroke="${c[0]}" stroke-width="3" opacity="0.4"/>
+        <line x1="280" y1="90" x2="360" y2="90" stroke="${c[0]}" stroke-width="3" opacity="0.4"/>
+    </svg>`;
+}
+
+function buildProductSVG(c) {
+    const txt = getContrastColor(c[0]);
+    const btnTxt = getContrastColor(c[3]);
+    return `<svg viewBox="0 0 360 420" xmlns="http://www.w3.org/2000/svg">
+        <!-- Фон страницы (z-bg) -->
+        <rect id="z-bg" width="360" height="420" fill="${c[0]}"/>
+        <!-- Тень карточки -->
+        <rect x="52" y="52" width="256" height="316" rx="12" fill="rgba(0,0,0,0.08)"/>
+        <!-- Карточка (z-card) -->
+        <rect id="z-card" x="48" y="48" width="256" height="316" rx="10" fill="${c[1]}"/>
+        <!-- Изображение товара — заглушка -->
+        <rect x="48" y="48" width="256" height="160" rx="10" fill="${c[2]}" opacity="0.6"/>
+        <rect x="48" y="188" width="256" height="20" rx="0" fill="${c[1]}"/>
+        <!-- Иконка товара (силуэт платья) -->
+        <path d="M158,68 L158,78 L148,90 L140,158 L220,158 L212,90 L202,78 L202,68
+                 Q180,80 158,68 Z" fill="${c[0]}" opacity="0.35"/>
+        <ellipse cx="180" cy="64" rx="18" ry="12" fill="${c[0]}" opacity="0.3"/>
+        <!-- Тег/бейдж (z-tag) -->
+        <rect id="z-tag" x="58" y="58" width="48" height="20" rx="4" fill="${c[5]}"/>
+        <text x="82" y="72" text-anchor="middle" font-family="Montserrat,sans-serif"
+              font-size="8" fill="${getContrastColor(c[5])}" letter-spacing="1">НОВИНКА</text>
+        <!-- Заголовок (z-title) -->
+        <rect id="z-title" x="68" y="222" width="140" height="10" rx="3" fill="${c[2]}" opacity="0.8"/>
+        <rect x="68" y="238" width="100" height="7" rx="3" fill="${c[2]}" opacity="0.45"/>
+        <!-- Цена (z-price) -->
+        <text x="68" y="274" font-family="Playfair Display,serif" font-size="22"
+              fill="${c[4]}" font-style="italic">4 890 ₽</text>
+        <text x="68" y="290" font-family="Montserrat,sans-serif" font-size="9"
+              fill="${c[2]}" opacity="0.6" letter-spacing="1" text-decoration="line-through">6 200 ₽</text>
+        <!-- Звёзды рейтинга -->
+        ${[0,1,2,3,4].map(i=>`<text x="${68+i*16}" y="308" font-size="11" fill="${i<4?c[3]:c[2]}" opacity="${i<4?'1':'0.3'}">★</text>`).join('')}
+        <!-- Кнопка (z-btn) -->
+        <rect id="z-btn" x="68" y="318" width="216" height="36" rx="6" fill="${c[3]}"/>
+        <text x="176" y="341" text-anchor="middle" font-family="Montserrat,sans-serif"
+              font-size="10" fill="${btnTxt}" letter-spacing="2">В КОРЗИНУ</text>
+    </svg>`;
+}
+
+function buildPatternSVG(c) {
+    const size = 60;
+    const cols = 6, rows = 5;
+    let shapes = '';
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const x = col * size, y = row * size;
+            const cx2 = x + size/2, cy2 = y + size/2;
+            const idx = (row + col) % 6;
+            const color = c[idx];
+            const type = (row * cols + col) % 4;
+            if (type === 0) {
+                shapes += `<rect x="${x+6}" y="${y+6}" width="${size-12}" height="${size-12}" rx="4" fill="${color}"/>`;
+            } else if (type === 1) {
+                shapes += `<circle cx="${cx2}" cy="${cy2}" r="${size/2-6}" fill="${color}"/>`;
+            } else if (type === 2) {
+                shapes += `<polygon points="${cx2},${y+6} ${x+size-6},${y+size-6} ${x+6},${y+size-6}" fill="${color}"/>`;
+            } else {
+                shapes += `<path d="M${cx2},${y+6} Q${x+size-4},${cy2} ${cx2},${y+size-6} Q${x+4},${cy2} ${cx2},${y+6}" fill="${color}"/>`;
+            }
+            // Акцентные точки
+            if ((row + col) % 5 === 0) {
+                shapes += `<circle cx="${cx2}" cy="${cy2}" r="3" fill="${c[5]}" opacity="0.7"/>`;
+            }
+        }
+    }
+    return `<svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg">
+        <rect width="360" height="300" fill="${c[0]}"/>
+        ${shapes}
+    </svg>`;
+}
+
+function buildBrandingSVG(c) {
+    const bgTxt = getContrastColor(c[0]);
+    const cardTxt = getContrastColor(c[1]);
+    return `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+        <!-- Фон бренда (z-brand-bg) -->
+        <rect id="z-brand-bg" width="400" height="320" fill="${c[0]}"/>
+        <!-- Декоративная полоса -->
+        <rect x="0" y="0" width="8" height="320" fill="${c[2]}"/>
+        <rect x="392" y="0" width="8" height="320" fill="${c[2]}"/>
+        <!-- Визитка (z-brand-card) -->
+        <rect id="z-brand-card" x="60" y="60" width="280" height="160" rx="6"
+              fill="${c[1]}" filter="drop-shadow(0 4px 12px rgba(0,0,0,0.12))"/>
+        <!-- Логотип — геометрический (z-brand-logo) -->
+        <circle id="z-brand-logo" cx="120" cy="128" r="30" fill="${c[2]}" opacity="0.9"/>
+        <circle cx="120" cy="128" r="18" fill="${c[0]}"/>
+        <circle cx="120" cy="128" r="8" fill="${c[2]}"/>
+        <!-- Название бренда (z-brand-text) -->
+        <text id="z-brand-text" x="164" y="116" font-family="Playfair Display,serif"
+              font-size="20" fill="${c[3]}" font-style="italic">Atelier</text>
+        <text x="164" y="134" font-family="Montserrat,sans-serif"
+              font-size="9" fill="${c[3]}" letter-spacing="4" opacity="0.8">PALETTE · STUDIO</text>
+        <!-- Линия-разделитель (z-brand-line) -->
+        <line id="z-brand-line" x1="164" y1="145" x2="316" y2="145"
+              stroke="${c[4]}" stroke-width="1.5"/>
+        <!-- Контакт -->
+        <text x="164" y="162" font-family="Montserrat,sans-serif"
+              font-size="8" fill="${cardTxt}" letter-spacing="1.5" opacity="0.6">palette-atelier.studio</text>
+        <!-- Акцентная точка (z-brand-dot) -->
+        <circle id="z-brand-dot" cx="316" cy="175" r="8" fill="${c[5]}"/>
+        <!-- Этикетка -->
+        <rect x="60" y="248" width="120" height="36" rx="4" fill="${c[1]}"/>
+        <rect x="60" y="248" width="6" height="36" rx="2" fill="${c[2]}"/>
+        <text x="78" y="262" font-family="Montserrat,sans-serif"
+              font-size="7" fill="${c[3]}" letter-spacing="2" opacity="0.7">КОЛЛЕКЦИЯ</text>
+        <text x="78" y="277" font-family="Playfair Display,serif"
+              font-size="13" fill="${c[3]}" font-style="italic">Printemps 2026</text>
+        <!-- Паттерн-фон мелкий -->
+        ${[0,1,2,3,4,5,6,7].map(i=>`<circle cx="${20+i*52}" cy="296" r="3" fill="${c[i%6]}" opacity="0.4"/>`).join('')}
+    </svg>`;
+}
+
+function renderScene(scene, colors) {
+    if (!colors || colors.length < 6) return;
+    const c = colors.map(col => col.hex);
+    // дополнить до 6 если меньше
+    while (c.length < 6) c.push(c[c.length - 1]);
+
+    const preview = document.getElementById('scenePreview');
+    const legend  = document.getElementById('sceneLegend');
+    if (!preview || !legend) return;
+
+    const builders = {
+        fashion:  buildFashionSVG,
+        interior: buildInteriorSVG,
+        product:  buildProductSVG,
+        pattern:  buildPatternSVG,
+        branding: buildBrandingSVG,
+    };
+    preview.innerHTML = builders[scene](c);
+
+    // Легенда
+    const zones = SCENE_ZONES[scene];
+    legend.innerHTML = `<div class="scene-legend-title">Распределение цветов</div>`;
+    zones.forEach((zone, i) => {
+        const color = colors[i] || colors[colors.length - 1];
+        const txtC  = getContrastColor(color.hex);
+        legend.innerHTML += `
+            <div class="scene-legend-item">
+                <div class="scene-legend-swatch" style="background:${color.hex}"
+                     title="Скопировать ${color.hex}"
+                     onclick="navigator.clipboard.writeText('${color.hex}')"></div>
+                <div class="scene-legend-info">
+                    <div class="scene-legend-zone">${zone.label}</div>
+                    <div class="scene-legend-hex">${color.hex} &nbsp;<span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;">${color.name}</span></div>
+                </div>
+                <div class="scene-legend-pct">${zone.pct}</div>
+            </div>`;
+    });
+    legend.innerHTML += `<div class="scene-swap-hint">Нажмите на квадрат цвета, чтобы скопировать HEX</div>`;
+}
+
+function switchScene(scene) {
+    currentScene = scene;
+    document.querySelectorAll('.scene-tab').forEach(t => {
+        t.classList.toggle('active', t.getAttribute('onclick') === `switchScene('${scene}')`);
+    });
+    renderScene(scene, window._currentSceneColors || []);
+}
+
+function showSceneSection(colors) {
+    window._currentSceneColors = colors;
+    const section = document.getElementById('sceneSection');
+    section.classList.add('visible');
+    renderScene(currentScene, colors);
 }
 </script>
 </body>
